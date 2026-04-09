@@ -3,19 +3,17 @@
 <ul>
   {{#each equippedItems}}
     <li>
-        {{this.name}}
+        <strong>{{this.name}}</strong>
 
-      <strong>{{item.name}}</strong>
-
-      {{#if (eq item.type "weapon")}}
-        <button class="roll-weapon" data-item-id="{{item.id}}">
-          <i class="fas fa-dice"></i> ({{item.system.damage}})
+      {{#if (eq this.type "weapon")}}
+        <button class="roll-weapon" data-item-id="{{this.id}}">
+          <i class="fas fa-dice"></i> ({{this.system.damage}})
         </button>
       {{/if}}
 
-      {{#if (eq item.type "utility")}}
-        <button class="roll-heal" data-item-id="{{item.id}}">
-          <i class="fas fa-heart"></i> ({{item.system.heal}})
+      {{#if (eq this.type "utility")}}
+        <button class="roll-heal" data-item-id="{{this.id}}">
+          <i class="fas fa-heart"></i> ({{this.system.heal}})
         </button>
       {{/if}}
 
