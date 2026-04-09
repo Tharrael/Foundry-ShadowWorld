@@ -1,0 +1,42 @@
+<style>
+  /* Fixed header styles */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #fff;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Tab structure styles */
+  .tabs {
+    display: flex;
+    justify-content: space-around;
+    background-color: #f1f1f1;
+    padding: 10px;
+  }
+  .tab {
+    flex: 1;
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+  }
+  .tab.active {
+    background-color: #ddd;
+    font-weight: bold;
+  }
+</style>
+
+<header>
+  <h1>Actor Sheet</h1>
+</header>
+<div class="tabs">
+  <div class="tab active">Overview</div>
+  <div class="tab">Stats</div>
+  <div class="tab">Inventory</div>
+  <div class="tab">Abilities</div>
+</div>
+<div>
+  <!-- Content goes here -->
+</div>
