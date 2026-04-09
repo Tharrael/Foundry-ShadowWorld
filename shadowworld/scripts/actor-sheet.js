@@ -56,9 +56,9 @@ export class ShadowWorldActorSheet extends ActorSheet {
     .render(true);
   }
 
-  /** @override */
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+      /** @override */
+      static get defaultOptions() {
+        return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["shadowworld", "sheet", "actor"],
       template: "systems/shadowworld/templates/actor/actor-sheet.hbs",
       width: 900,
@@ -77,9 +77,9 @@ export class ShadowWorldActorSheet extends ActorSheet {
     });
   }
 
-  async _updateObject(event, formData) {
-  console.log("FORM UPDATE BLOCKED", formData);
-  }
+      async _updateObject(event, formData) {
+      console.log("FORM UPDATE BLOCKED", formData);
+      }
 
   /** @override */
   async getData() {
@@ -154,7 +154,7 @@ export class ShadowWorldActorSheet extends ActorSheet {
 
     context.items = items;
 
-    context.quippedItems = items.filter(i => i.system?.equipped === true);
+    context.equippedItems = items.filter(i => i.system?.equipped === true);
     
     return context;
     
@@ -359,7 +359,7 @@ export class ShadowWorldActorSheet extends ActorSheet {
 
     await this.actor.updateEmbeddedDocuments("Item", [{
       _id: itemId,
-      "system.equipped": value}
+      "system.equipped": value }
     ]);
   });
   
