@@ -1,0 +1,355 @@
+/* ACTOR SHEET LAYOUT */
+.shadowworld.sheet.actor {
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
+/* FIXED HEADER */
+.actor-sheet-header {
+  flex-shrink: 0;
+  padding: 10px 15px;
+  border-bottom: 2px solid #000;
+}
+
+.actor-sheet-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  margin: 10px 0 15px 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* TABS RIBBON */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #000;
+  flex-wrap: wrap;
+}
+
+.tabs .item {
+  padding: 8px 15px;
+  background: white;
+  border-right: 1px solid #000;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1px;
+  transition: background-color 0.2s;
+}
+
+.tabs .item:hover {
+  background: #f0f0f0;
+}
+
+.tabs .item.active {
+  background: #e0e0e0;
+  border-bottom: 3px solid #000;
+  position: relative;
+  bottom: -1px;
+}
+
+/* SCROLLABLE CONTENT AREA */
+.sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+  background: white;
+}
+
+/* TAB CONTENT */
+.tab {
+  display: none;
+}
+
+.tab.active {
+  display: block;
+}
+
+/* DESCRIPTION TAB LAYOUT (Two-column with image on left) */
+.tab.description {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.description-left {
+  border: 2px solid #000;
+  padding: 10px;
+  background: #f9f9f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1; /* Makes it square, adjust if needed */
+  overflow: hidden;
+}
+
+.description-left img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Crops image to fit while maintaining aspect ratio */
+}
+
+.description-left .no-image {
+  color: #999;
+  text-align: center;
+  font-style: italic;
+}
+
+.description-right {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.stat-block {
+  border: 2px solid #000;
+  padding: 10px;
+  background: #f9f9f9;
+}
+
+.stat-label {
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.stat-input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #000;
+  box-sizing: border-box;
+}
+
+/* COMBAT TAB LAYOUT */
+.tab.combat {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 15px;
+  grid-template-areas:
+    "attributes attributes equipment"
+    "skills skills equipment";
+}
+
+.attributes-section {
+  grid-area: attributes;
+  border: 2px solid #000;
+  padding: 10px;
+}
+
+.attributes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 15px;
+}
+
+.attribute-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.attribute-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.attribute-name {
+  font-weight: bold;
+  min-width: 40px;
+  text-transform: uppercase;
+}
+
+.attribute-input {
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #000;
+}
+
+.skills-section {
+  grid-column: 1 / -1;
+  border: 2px solid #000;
+  padding: 10px;
+}
+
+.skills-title {
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.skill-level {
+  margin-bottom: 15px;
+}
+
+.skill-level-title {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.skill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-left: 15px;
+}
+
+.skill-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px dotted #ccc;
+}
+
+.skill-name {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.skill-delete {
+  cursor: pointer;
+  font-weight: bold;
+  color: #666;
+  padding: 2px 8px;
+}
+
+.equipment-section {
+  grid-area: equipment;
+  border: 2px solid #000;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.equipment-title {
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.equipment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.equipment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+.equipment-info {
+  flex: 1;
+  font-size: 12px;
+}
+
+.equipment-roll {
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* INVENTORY TAB LAYOUT */
+.tab.inventory {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inventory-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 2px solid #000;
+  padding: 10px;
+}
+
+.inventory-list .item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  gap: 10px;
+}
+
+.inventory-list .item:last-child {
+  border-bottom: none;
+}
+
+.item-name {
+  font-weight: bold;
+  flex: 1;
+}
+
+.item-equipped {
+  cursor: pointer;
+}
+
+.item-delete {
+  cursor: pointer;
+  color: red;
+  font-weight: bold;
+}
+
+/* SCROLLBAR STYLING */
+.sheet-body::-webkit-scrollbar {
+  width: 12px;
+}
+
+.sheet-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.sheet-body::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 6px;
+}
+
+.sheet-body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .tab.combat {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "attributes attributes"
+      "skills skills"
+      "equipment equipment";
+  }
+
+  .attributes-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .tab.description {
+    grid-template-columns: 1fr;
+  }
+
+  .tab.combat {
+    grid-template-columns: 1fr;
+  }
+
+  .attributes-grid {
+    grid-template-columns: 1fr;
+  }
+}
