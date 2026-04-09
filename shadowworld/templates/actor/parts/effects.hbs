@@ -1,0 +1,13 @@
+<h2>Effects</h2>
+
+<ul class="effects-list">
+  {{#if effects.length}}
+    {{#each effects as |effect|}}
+      <li class="effect" data-effect-id="{{effect.id}}">
+        <strong>{{effect.name}}</strong>
+      </li>
+    {{/each}}
+  {{else}}
+    <li>No active effects</li>
+  {{/if}}
+</ul>

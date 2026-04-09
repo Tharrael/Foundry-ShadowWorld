@@ -1,0 +1,25 @@
+<h2>Atributy</h2>
+
+<div class="attributes">
+
+  {{#each attributesList}}
+    <div class="attribute">
+      <button type="button"
+              class="sw-button roll-attribute"
+              data-attr="{{key}}">
+        <i class="fas fa-dice-d10"></i> 
+        
+      </button>
+
+      <label>{{lookup ../attributeLabels key}}</label>
+      
+      <input type="number"
+             name="system.attributes.{{key}}"
+             value="{{value}}">
+
+      
+
+    </div>
+  {{/each}}
+
+</div>

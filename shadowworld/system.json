@@ -1,0 +1,43 @@
+{
+  "id": "shadowworld",
+  "title": "ShadowWorld System",
+  "description": "Modern tactical RPG system (Detroit campaign)",
+  "version": "0.0.1",
+  "authors": [
+    {
+      "name": "Thai + ChatGPT 😄"
+    }
+  ],
+  "compatibility": {
+    "minimum": "12",
+    "verified": "14"
+  },
+  "esmodules": ["scripts/init.js",
+    "scripts/actor-sheet.js",
+    "scripts/actor-model.js",
+    "scripts/actor.js",
+    "scripts/item-model.js",
+    "scripts/item-sheet.js"
+  ],
+  "styles": ["styles/shadowworld.css"],
+  "packs": [],
+  "languages": [],
+  "url": "",
+  "manifest": "",
+  "download": "",
+  "template": "template.json",
+  "documentTypes": {
+    "Actor": {
+      "character": {}  
+      
+    },
+    
+    "Item": {
+      "weapon": {},
+      "armor": {},
+      "consumable": {},
+      "utility": {}
+      }
+    
+  } 
+}

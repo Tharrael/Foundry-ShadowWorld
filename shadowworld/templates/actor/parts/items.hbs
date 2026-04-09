@@ -1,0 +1,39 @@
+<h2>Inventory</h2>
+
+<ul class="inventory-list">
+  {{#each items as |item|}}
+    <li class="item" data-item-id="{{item.id}}">
+
+      <!-- Název -->
+      <strong>{{item.name}}</strong>
+
+      <!-- Weapon -->
+      {{#if (eq item.type "weapon")}}
+        <span> | Damage: {{item.system.damage}}</span>
+        <span> | Bonus: {{item.system.bonus}}</span>
+      {{/if}}
+
+      <!-- Utility -->
+      {{#if (eq item.type "utility")}}
+        <span> | Heal: {{item.system.heal}}</span>
+      {{/if}}
+
+      <!-- Equip -->
+      <label style="margin-left: 10px;">
+        Equipped
+        <input type="checkbox"
+               class="item-equipped"
+               data-item-id="{{item.id}}"
+               {{checked item.system.equipped}}>
+      </label>
+
+      <!-- 🔥 DELETE BUTTON -->
+      <button type="button"
+              class="item-delete"
+              data-item-id="{{item.id}}">
+        <i class="fas fa-trash"></i>
+      </button>
+
+    </li>
+  {{/each}}
+</ul>

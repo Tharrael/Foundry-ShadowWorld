@@ -1,0 +1,173 @@
+.shadowworld .skill-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shadowworld .skill-row input {
+  flex: 1;
+}
+
+.shadowworld .delete-skill {
+  margin-left: auto;
+}
+
+.attributes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px 15%;
+  margin-bottom: 10px;
+}
+
+.attribute {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.attribute label {
+  font-weight: bold;
+  min-width: 40px;
+} 
+
+.attribute input{
+  width: 50px;
+  padding: 2px;
+  text-align: center;
+  border-radius: 4px;
+}
+
+.hp {
+  display: flex;
+  gap: 10px;
+}
+
+.roll-attribute {
+  width: 24px;
+  height: 24px;
+  padding: 0%;
+}
+
+.roll-skill {
+  width: 24px;
+  height: 24px;
+  padding: 0%;
+}
+
+.sw-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  padding: 3px 8px;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  color: #ccc;
+  background: rgba(0, 0, 0, 0.4);
+
+  border: 1px solid #555;
+  border-radius: 5px;
+
+  cursor: pointer;
+
+  transition: all 0.15s ease;
+}
+
+.sw-button:hover {
+  color: #fff;
+  border-color: #888;
+}
+
+.sw-button:active {
+  transform: scale(0.95);
+}
+
+.sw-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  gap: 5px;
+
+  padding: 1px 1px;
+
+  font-size: 11px;
+  font-weight: 60;
+
+  color: #070707;
+  background: rgba(0, 0, 0, 0.4);
+
+  border: 1px solid #555;
+  border-radius: 5px;
+
+  cursor: pointer;
+
+  transition: all 0.15s ease;
+}
+
+.sw-button:hover {
+  color: #a50808;
+  border-color: #888;
+}
+
+.sw-button:active {
+  transform: scale(0.95);
+}
+
+.roll-attribute,
+.roll-skill {
+  padding: 1px 1px 1px 1px;
+  align-content: center;
+  background: rgba(60, 100, 200, 0.15);
+  border-color: rgba(100, 150, 255, 0.4);
+}
+
+.roll-attribute i,
+.roll-skill i {
+  font-size: 20px;
+  opacity: 0.85;
+}
+
+.add-skill {
+  width: 24px;
+  height: 24px;
+  font-size: 20px;
+  background: rgba(60, 160, 100, 0.15);
+  border-color: rgba(100, 255, 150, 0.4);
+}
+
+.add-skill:hover {
+  background: rgba(100, 255, 150, 0.25);
+  border-color: #6fffaa;
+  box-shadow: 0 0 4px rgba(100,255,150,0.4);
+}
+
+.delete-skill {
+  width: 24px;
+  height: 24px;
+  font-size: 18px;
+  background: rgba(180, 60, 60, 0.15);
+  border-color: rgba(255, 100, 100, 0.4);
+  color: rgb(147, 20, 20);
+}
+
+.delete-skill:hover {
+  background: rgba(255, 80, 80, 0.25);
+  border-color: #ff6f6f;
+  color: #fff;
+  box-shadow: 0 0 4px rgba(255,100,100,0.5);
+}
+
+.item-delete {
+  width: 24px;
+  height: 24px;
+  font-size: 18px;
+  background: rgba(180, 60, 60, 0.15);
+  border-color: rgba(255, 100, 100, 0.4);
+  color: rgb(147, 20, 20);
+}

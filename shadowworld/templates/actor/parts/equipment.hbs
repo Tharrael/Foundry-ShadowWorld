@@ -1,0 +1,24 @@
+<h2>Equipped Items</h2>
+
+<ul>
+  {{#each equippedItems}}
+    <li>
+        {{this.name}}
+
+      <strong>{{item.name}}</strong>
+
+      {{#if (eq item.type "weapon")}}
+        <button class="roll-weapon" data-item-id="{{item.id}}">
+          <i class="fas fa-dice"></i> ({{item.system.damage}})
+        </button>
+      {{/if}}
+
+      {{#if (eq item.type "utility")}}
+        <button class="roll-heal" data-item-id="{{item.id}}">
+          <i class="fas fa-heart"></i> ({{item.system.heal}})
+        </button>
+      {{/if}}
+
+    </li>
+  {{/each}}
+</ul>

@@ -1,0 +1,11 @@
+<div class="item-description">
+
+  <h4>Description</h4>
+
+  {{#if editable}}
+    {{editor system.description target="system.description" button=true editable=editable}}
+  {{else}}
+    {{{system.description}}}
+  {{/if}}
+
+</div>

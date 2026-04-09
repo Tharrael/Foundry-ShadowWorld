@@ -1,0 +1,57 @@
+<h2>Skills</h2>
+<span class="skill-level">Lv. {{this.level}}</span>
+
+{{#each skillsByLevel as |skills lvl|}}
+  <div class="skill-block">
+
+    <h3>
+      {{lookup ../levelLabels lvl}}
+      <button type="button"
+            class="sw-button add-skill"
+            data-level="{{lvl}}">
+        <i class="fas fa-plus"></i>
+      </button>
+
+      {{#if ../isGM}}
+        (
+        <input type="number"
+               name="system.skillLimits.{{lvl}}"
+               value="{{lookup ../system.skillLimits lvl}}"
+               style="width: 40px;">
+        )
+      {{/if}}
+      
+    </h3>
+
+    {{#each skills}}
+      <div class="skill-row">
+
+         <!-- 🎲 roll button -->
+         <button type="button"
+                class="sw-button roll-skill"
+                data-index="{{this._index}}">
+          <i class="fas fa-dice-d10"></i>
+        </button>
+
+        <input type="text"
+               data-index="{{this._index}}"
+               class="skill-name"
+               value="{{this.name}}"
+               placeholder="Skill name">
+
+         
+
+        <!-- ❌ delete -->
+        <button type="button"
+                class="sw-button delete-skill"
+                data-index="{{this._index}}">
+            <i class="fas fa-trash"></i>
+        </button>
+
+      </div>
+    {{/each}}
+
+    
+
+  </div>
+{{/each}}

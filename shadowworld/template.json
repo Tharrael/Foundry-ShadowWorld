@@ -1,0 +1,30 @@
+{
+  "Actor": {
+    "types": ["character"],
+    "templates": {
+      "base": {
+        "attributes": {
+          "str": 0,
+          "con": 0,
+          "dex": 0,
+          "int": 0,
+          "wis": 0,
+          "cha": 0
+        },
+        "skills": {
+          "firearms": 0,
+          "brawl": 0,
+          "perception": 0
+        },
+        "hp": {
+          "max": 50,
+          "current": 50,
+          "nonlethal": 0
+        },
+        "armor": {
+          "level": 0
+        }
+      }
+    }
+  }
+}
