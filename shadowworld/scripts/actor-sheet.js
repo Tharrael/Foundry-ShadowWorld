@@ -77,9 +77,9 @@ export class ShadowWorldActorSheet extends ActorSheet {
     });
   }
 
-      async _updateObject(event, formData) {
-      console.log("FORM UPDATE BLOCKED", formData);
-      }
+  async _updateObject(event, formData) {
+  return this.object.update(formData);
+  }
 
   /** @override */
   async getData() {
