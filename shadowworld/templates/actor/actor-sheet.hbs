@@ -1,0 +1,31 @@
+<form class=""{{cssClass}} autocomplete=""off">
+<div class="sheet-header">
+<h1>{{actor.name}}</h1>
+</div>
+<nav class="sheet-tabs tabs" data-group="primary">
+  <a class="item" data-tab="description">Popis</a>
+  <a class="item" data-tab="combat">Boj</a>
+  <a class="item" data-tab="inventory">Inventář</a>
+  <a class="item" data-tab="effects">Efekty</a>
+  
+</nav>
+
+<section class="sheet-body">
+  <div class="tab combat" data-group="primary" data-tab="combat">
+    {{> "systems/shadowworld/templates/actor/tabs/tab-combat.hbs"}}
+  </div>
+  <div class="tab" data-group="primary" data-tab="journal">
+    {{> "systems/shadowworld/templates/actor/tabs/tab-journal.hbs"}}
+  </div>
+  <div class="tab" data-group="primary" data-tab="description">
+    {{> "systems/shadowworld/templates/actor/tabs/tab-description.hbs"}}
+  </div>
+  <div class="tab" data-group="primary" data-tab="inventory">
+    {{> "systems/shadowworld/templates/actor/tabs/tab-inventory.hbs"}}
+  </div>
+  <div class="tab" data-group="primary" data-tab="effects">
+    {{> "systems/shadowworld/templates/actor/tabs/tab-effects.hbs"}}
+  </div>
+
+</section>
+</form>

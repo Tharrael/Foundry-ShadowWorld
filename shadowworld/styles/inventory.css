@@ -1,0 +1,21 @@
+/* ========================= */
+/* INVENTORY */
+/* ========================= */
+
+.shadowworld.sheet.actor .inventory {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* SECTIONS */
+.shadowworld.sheet.actor .inventory-section {
+  background: var(--bg-panel);
+  border: 1px solid var(--gold);
+  padding: 8px;
+}
+
+.shadowworld.sheet.actor .inventory-section h3 {
+  margin-bottom: 6px;
+  color: var(--gold);
+}

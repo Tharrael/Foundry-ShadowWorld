@@ -1,0 +1,213 @@
+<div class="combat-equipment">
+
+  <!-- 🔫 ZBRANĚ -->
+  <div class="eq-section">
+    <div class="eq-section-title">Zbraně
+      <span class="eq-count">({{counts.weapon}} / 2)</span>
+    </div>
+
+    <div class="eq-stack">
+      {{#each equippedItems}}
+        {{#if (eq this.type "weapon")}}
+
+          <div class="eq-slot">
+            <div class="eq-item sw-item-card" data-item-id="{{this.id}}">
+
+              <!-- LEFT: MAIN CONTENT -->
+              <div class="eq-main">
+
+                <div class="eq-header">
+                  <strong>{{this.name}}</strong>
+                  <span class="eq-type">({{this.type}})</span>
+                </div>
+
+                <div class="eq-properties">
+
+                  <span>Mag: {{this.system.currentMagazine}} / {{this.system.magazineSize}}</span>
+
+                  <label>| Ammo</label>
+                  <select class="item-ammo" data-item-id="{{this.id}}">
+                    <option value="">Základní</option>
+
+                    {{#each ../ammoItems}}
+                      <option value="{{this.id}}"
+                        {{#if (eq this.id ../this.system.loadedAmmoId)}}selected{{/if}}
+                        {{#if (eq this.system.quantity 0)}}disabled{{/if}}>
+                        {{this.name}} ({{this.system.quantity}})
+                      </option>
+                    {{/each}}
+                  </select>
+
+                  <span> Damage: {{this.system.damage}}</span>
+                  <span>| Type: {{this.system.damageType}}</span>
+                  <span>| Bonus:"+" {{this.system.bonus}}</span>
+
+                </div>
+              </div>
+
+              <div class="eq-actions">
+
+                <button class="roll-attack eq-button attack" type="button" data-item-id="{{this.id}}">
+                  <i class="fas fa-crosshairs"></i>
+                </button>
+                
+                <button type="button" class="roll-weapon eq-button damage" data-item-id="{{this.id}}">
+                  <i class="fas fa-burst"></i> 
+                </button>
+
+                <button class="reload-weapon eq-button reload" type="button" data-item-id="{{this.id}}">
+                  <i class="fas fa-sync"></i>
+                </button>
+
+              </div>
+
+            </div>
+          </div>
+
+        {{/if}}
+      {{/each}}
+
+      
+    </div>
+  </div>
+
+
+  <!-- 🛡️ ARMOR -->
+  <div class="eq-section">
+    <div class="eq-section-title">Balistická ochrana
+      <span class="eq-count">({{counts.armor}} / 1)</span>
+    </div>
+
+    <div class="eq-stack">
+      {{#each equippedItems}}
+        {{#if (eq this.type "armor")}}
+
+          <div class="eq-slot">
+            <div class="eq-item sw-item-card" data-item-id="{{this.id}}">
+
+              <div class="eq-main">
+                <div class="eq-header">
+                  <strong>{{this.name}}</strong>
+                  <span class="eq-type">({{this.type}})</span>
+                </div>
+
+                <div class="eq-properties">
+                  <span>Armor Level: {{this.system.armor}}</span>
+                  <span>Dex Penalty: {{this.system.dexPenalty}}</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        {{/if}}
+      {{/each}}
+
+      
+    </div>
+  </div>
+
+
+  <!-- 🧰 UTILITY -->
+  <div class="eq-section">
+    <div class="eq-section-title">Vybavení
+      <span class="eq-count">({{counts.utility}} / 4)</span>
+    </div>
+
+    <div class="eq-stack">
+      {{#each equippedItems}}
+        {{#if (and (eq this.type "utility")(not this.system.consumable))}}
+
+          <div class="eq-slot">
+            <div class="eq-item sw-item-card" data-item-id="{{this.id}}">
+
+              <div class="eq-main">
+
+                <div class="eq-header">
+                  <strong>{{this.name}}</strong>
+                  <span class="eq-type">({{this.type}})</span>
+                </div>
+
+                <div class="eq-properties">
+                  {{#if this.system.effects.length}}
+                    <span>
+                      {{#each this.system.effects}}
+                        ({{effectLabel this.type}} : {{this.value}}{{#unless @last}}, {{/unless}})
+                      {{/each}}
+                    </span>
+                  {{/if}}
+                </div>
+
+              </div>
+
+              <div class="eq-actions">
+                <button class="roll-heal eq-button use" type="button" data-item-id="{{this.id}}">
+                  <i class="fas fa-heart"></i>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        {{/if}}
+      {{/each}}
+
+      
+    </div>
+  </div>
+
+
+  <!-- ⚡ CONSUMABLE -->
+  <div class="eq-section">
+    <div class="eq-section-title">Spotřební vybavení
+      <span class="eq-count">({{counts.consumable}} / 4)</span>
+    </div>
+
+    <div class="eq-stack">
+      {{#each equippedItems}}
+        {{#if this.system.consumable}}
+
+          <div class="eq-slot">
+            <div class="eq-item sw-item-card" data-item-id="{{this.id}}">
+
+              <div class="eq-main">
+
+                <div class="eq-header">
+                  <strong>{{this.name}}</strong>
+                  <span class="eq-type">({{this.type}})</span>
+                </div>
+
+                <div class="eq-properties">
+                  <span>Charges: {{this.system.charges}} / {{this.system.maxCharges}}</span>
+
+                  {{#if this.system.effects.length}}
+                    <span>
+                      {{#each this.system.effects}}
+                        ({{effectLabel this.type}} : {{this.value}}{{#unless @last}}, {{/unless}})
+                      {{/each}}
+                    </span>
+                  {{/if}}
+                </div>
+
+              </div>
+
+              <div class="eq-actions">
+                <button type="button"
+                        class="use-item eq-button use"
+                        data-item-id="{{this.id}}">
+                  <i class="fas fa-bolt"></i>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        {{/if}}
+      {{/each}}
+
+      
+      
+    </div>
+  </div>
+
+</div>

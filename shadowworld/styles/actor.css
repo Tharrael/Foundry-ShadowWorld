@@ -1,0 +1,375 @@
+/* ========================= */
+/* ACTOR SHEET BASE */
+/* ========================= */
+
+.shadowworld.sheet.actor {
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+.shadowworld.sheet.actor .window-content {
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+/* ========================= */
+/* TABS */
+/* ========================= */
+
+.shadowworld.sheet.actor .sheet-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--gold);
+}
+
+.shadowworld.sheet.actor .sheet-tabs .item {
+  padding: 6px 12px;
+  cursor: pointer;
+  color: var(--text-dim);
+  border-bottom: 2px solid transparent;
+}
+
+.shadowworld.sheet.actor .sheet-tabs .item.active {
+  color: var(--gold);
+  border-bottom: 2px solid var(--gold);
+}
+
+.shadowworld.sheet.actor .sheet-tabs .item:hover {
+  color: var(--accent);
+}
+
+/* ========================= */
+/* TAB CONTENT */
+/* ========================= */
+
+.shadowworld.sheet.actor .tab {
+  padding: 10px;
+}
+.shadowworld.sheet.actor .sheet-header {
+  border-bottom: 1px solid var(--gold);
+  padding: 10px 15px;
+}
+
+.shadowworld.sheet.actor .sheet-header h1 {
+  font-size: 1.8em;
+  color: var(--gold);
+  margin: 0;
+}
+.shadowworld.sheet.actor .tabs .item {
+  flex: 1;
+
+  text-align: center;
+  padding: 6px 0;
+
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+
+  background: var(--bg-panel);
+  color: var(--text-dim);
+
+  cursor: pointer;
+}
+.shadowworld.sheet.actor .tabs .item.active {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+.shadowworld.sheet.actor .tabs .item:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: var(--bg-main);
+}
+.shadowworld.sheet.actor .tabs .item:not(:last-child) {
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+.shadowworld.sheet.actor .sheet-header h1 {
+  border-bottom: none;
+}
+.shadowworld.sheet.actor h2,
+.shadowworld.sheet.actor h3,
+.shadowworld.sheet.actor .sheet-header {
+  border-bottom: none;
+}
+.shadowworld.sheet.actor .sheet-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gold);
+}
+
+.shadowworld.sheet.actor .sheet-header h1::before {
+  content: "Agent Name:  ";
+  font-size: 0.8em;
+  color: var(--text-dim);
+  margin-left: 10px;
+}
+.shadowworld.sheet.actor .sheet-header h1::after {
+  content: "Status : Recruit";
+  position: absolute;
+  right: 0;
+  
+  font-size: 0.6em;
+  
+  color: var(--text-dim);
+
+  margin-right: 25px;
+ 
+
+}
+
+/* REMOVE RED LINE FROM WINDOW HEADER */
+.shadowworld.sheet.actor .window-header {
+  border-bottom: none;
+}
+
+/* REMOVE ANY H1 BORDERS */
+.shadowworld.sheet.actor h1 {
+  border-bottom: none;
+}
+
+/* JUST IN CASE (Foundry někdy používá hr) */
+.shadowworld.sheet.actor hr {
+  border: none;
+}
+
+
+.shadowworld.sheet.actor .tabs {
+  display: flex;
+  gap: 6px;
+  padding: 6px 10px;
+
+  border-bottom: none; /* pryč s linkou */
+}
+.shadowworld.sheet.actor .sheet-header {
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.02),
+    rgba(0,0,0,0.2)
+  );
+}
+.sw-attributes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sw-attr-row {
+  display: grid;
+  grid-template-columns: 32px 80px 1fr;
+  align-items: center;
+
+  padding: 6px 8px;
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  background: var(--bg-panel);
+}
+
+.roll-attribute {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+
+  padding: 0;
+  margin-right: 8px; /* 🔥 mezera od labelu */
+
+  cursor: pointer;
+}
+.roll-attribute i {
+  color: var(--accent);
+  font-size: 14px;
+}
+.roll-attribute:hover i {
+  color: var(--gold);
+}
+
+.attr-label {
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.attr-input {
+  text-align: center;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+/* optional hover polish */
+.sw-attr-row:hover {
+  background: rgba(255,255,255,0.04);
+}
+.skill-block {
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 8px;
+  margin-bottom: 8px;
+  background: var(--bg-panel);
+}
+
+/* HEADER */
+.skill-header {
+  display: grid;
+  grid-template-columns: 1fr 50px 32px;
+  align-items: center;
+  gap: 6px;
+
+  margin-bottom: 6px;
+}
+
+.skill-level {
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.skill-limit-input {
+  text-align: center;
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  color: var(--text-main);
+}
+
+/* ROW */
+.skill-row {
+  display: grid;
+  grid-template-columns: 32px 1fr 32px; /* 🔥 přidán roll */
+  align-items: center;
+
+  gap: 8px;
+  padding: 4px 6px;
+}
+
+.skill-name {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+}
+
+.delete-skill {
+  justify-self: end;
+}
+
+/* hover */
+.skill-row:hover {
+  background: rgba(255,255,255,0.04);
+  border-radius: 6px;
+}
+/* 🔥 SHARED BUTTON STYLE (skill + item consistency) */
+.sw-button.add-skill,
+.sw-button.delete-skill,
+.sw-button.roll-skill {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  
+   border: none;
+    background: transparent;
+    box-shadow: none;
+
+  cursor: pointer;
+}
+
+/* ikony */
+.sw-button.add-skill i,
+.sw-button.delete-skill i,
+.sw-button.roll-skill i {
+  font-size: 14px;
+  color: var(--accent);
+  
+}
+
+/* hover */
+.sw-button.add-skill:hover,
+.sw-button.delete-skill:hover,
+.sw-button.roll-skill:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--gold);
+ 
+}
+
+/* 🔴 delete může být trochu výraznější */
+.sw-button.delete-skill:hover {
+  color: #ff6b6b;
+}
+.sw-button.delete-skill:hover i {
+  color: #ff6b6b;
+}
+
+.roll-skill:hover i {
+  color: var(--gold);
+}
+.description-section {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+/* IMAGE */
+.portrait {
+  width: 100%;
+}
+.portrait .profile-img {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--gold);
+}
+
+/* RIGHT COLUMN */
+.basic-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.hp {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hp-row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  align-items: center;
+  gap: 8px;
+
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+
+.hp-row label {
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.hp-row input {
+  width: 60px;
+  text-align: center;
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  color: var(--text-main);
+}
+.basic-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center; /* 🔥 zarovná vertikálně */
+}
+.shadowworld.sheet.actor .sheet-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
+  background: var(--bg-main);
+  padding-bottom: 6px;
+}
+.shadowworld.sheet.actor .sheet-tabs {
+  position: sticky;
+  top: 48px; /* 🔥 výška headeru */
+  z-index: 19;
+
+  background: var(--bg-main);
+  padding: 6px 0;
+}

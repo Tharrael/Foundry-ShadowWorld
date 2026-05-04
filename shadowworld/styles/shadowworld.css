@@ -1,0 +1,84 @@
+/* ========================= */
+/* ONLY COMBAT TAB */
+/* ========================= */
+
+.shadowworld.sheet.actor .tab[data-tab="combat"].active {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* TOP */
+.shadowworld.sheet.actor .tab[data-tab="combat"] .combat-top {
+  display: flex;
+  gap: 12px;
+}
+
+/* PANELS */
+.shadowworld.sheet.actor .tab[data-tab="combat"] .combat-attributes,
+.shadowworld.sheet.actor .tab[data-tab="combat"] .combat-skills,
+.shadowworld.sheet.actor .tab[data-tab="combat"] .combat-equipment {
+  background: #1f2328;
+  border: 1px solid #f1d69f;
+  padding: 10px;
+}
+
+/* EQUIPMENT BLOCK */
+.shadowworld.sheet.actor .tab[data-tab="combat"] .combat-equipment {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.shadowworld.sheet.actor .tab {
+  display: none;
+}
+
+.shadowworld.sheet.actor .tab.active {
+  display: block;
+}
+.shadowworld.sheet.actor .inv-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 6px;
+  align-items: center;
+
+  padding: 6px;
+  border: 1px solid rgba(0,0,0,0.2);
+  margin-bottom: 6px;
+}
+
+/* inputs */
+.shadowworld.sheet.actor .inv-item select,
+.shadowworld.sheet.actor .inv-item input {
+  width: auto;
+  max-width: 120px;
+}
+
+/* buttons */
+.shadowworld.sheet.actor .inv-item button {
+  width: 28px;
+  height: 28px;
+}
+.shadowworld.sheet.actor .inv-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* levá část */
+.shadowworld.sheet.actor .inv-item > *:first-child {
+  flex: 1;
+}
+
+/* pravá část = akce */
+.shadowworld.sheet.actor .inv-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* tlačítka */
+.shadowworld.sheet.actor .inv-actions button {
+  width: 28px;
+  height: 28px;
+}

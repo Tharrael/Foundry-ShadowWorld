@@ -1,0 +1,32 @@
+<div class="item-header">
+
+    <div class="item-meta">
+    <span class="item-type">
+      Type: {{item.type}}
+    </span>
+  </div>
+
+</div>
+<hr>
+
+<label>Consumable</label>
+<input type="checkbox" name="system.consumable" {{checked system.consumable}}>
+<br>
+{{#if system.consumable}}
+
+  <label>Charges</label>
+  <input type="number" name="system.charges" value="{{system.charges}}" min="0">
+
+  <label>Max Charges</label>
+  <input type="number" name="system.maxCharges" value="{{system.maxCharges}}" min="0">
+
+  <label>Effect Type</label>
+  <select name="system.effectType">
+    <option value="">None</option>
+    <option value="heal" {{#if (eq system.effectType "heal")}}selected{{/if}}>Heal</option>
+  </select>
+
+  <label>Effect Value</label>
+  <input type="text" name="system.effectValue" value="{{system.effectValue}}">
+
+{{/if}}

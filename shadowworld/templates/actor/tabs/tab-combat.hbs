@@ -1,0 +1,32 @@
+<div class="tab combat" data-group="primary" data-tab="combat">
+
+  <!-- ===================== -->
+  <!-- TOP PANEL -->
+  <!-- ===================== -->
+  <div class="combat-top">
+    <div class="combat-layout">
+      
+        <div class="combat-attributes sw-panel">
+          {{> "systems/shadowworld/templates/actor/parts/attributes.hbs"}}
+        </div>
+      
+      
+        <div class="combat-skills sw-panel">
+          {{> "systems/shadowworld/templates/actor/parts/skills.hbs"}}
+        </div>
+      
+    </div>
+  </div>
+
+  <!-- ===================== -->
+  <!-- MAIN PANEL -->
+  <!-- ===================== -->
+  <div class="combat-main">
+
+    <div class="combat-equipment sw-panel">
+      {{> "systems/shadowworld/templates/actor/parts/equipment.hbs" equippedItems=equippedItems items=items}}
+    </div>
+
+  </div>
+
+</div>

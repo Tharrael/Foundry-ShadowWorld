@@ -1,0 +1,27 @@
+<form class= "item-sheet">
+
+<h2><div class="item-name">
+    <input type="text" name="name" value="{{item.name}}" placeholder="Item name">
+  </div></h2>
+
+{{> "systems/shadowworld/templates/item/parts/item-header.hbs"}}
+
+{{> "systems/shadowworld/templates/item/parts/item-description.hbs"}}
+
+{{#if (eq item.type "weapon")}}
+  {{> "systems/shadowworld/templates/item/parts/weapon.hbs"}}
+{{/if}}
+
+{{#if (eq item.type "armor")}}
+  {{> "systems/shadowworld/templates/item/parts/armor.hbs"}}
+{{/if}}
+
+{{#if (eq item.type "utility")}}
+  {{> "systems/shadowworld/templates/item/parts/utility.hbs"}}
+{{/if}}
+
+{{#if (eq item.type "ammo")}}
+  {{> "systems/shadowworld/templates/item/parts/ammo.hbs"}}
+{{/if}}
+
+</form>

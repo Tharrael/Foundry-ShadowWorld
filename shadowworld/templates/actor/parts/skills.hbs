@@ -1,0 +1,67 @@
+<h2>Skills</h2>
+
+{{#each skillsByLevelSorted}}
+
+  {{!-- GM vždy, hráč jen pokud existují skilly --}}
+  {{#if (or ../isGM this.skills.length)}}
+
+  <div class="skill-block">
+
+    <!-- HEADER -->
+    <div class="skill-header">
+
+      <!-- LABEL -->
+      <span class="skill-level">
+        {{lookup ../levelLabels this.level}}
+      </span>
+
+      <!-- GM LIMIT -->
+      {{#if ../isGM}}
+        <input type="number"
+               class="skill-limit-input"
+               name="system.skillLimits.{{this.level}}"
+               value="{{lookup ../system.skillLimits this.level}}">
+      {{/if}}
+
+      <!-- ADD BUTTON -->
+      <button type="button"
+              class="sw-button add-skill"
+              data-level="{{this.level}}">
+        <i class="fas fa-plus"></i>
+      </button>
+
+    </div>
+
+    <!-- SKILLS -->
+    {{#each this.skills}}
+      <div class="skill-row">
+        
+        <!-- 🎲 ROLL -->
+        <button type="button"
+                class="sw-button roll-skill"
+                data-index="{{this._index}}">
+          <i class="fas fa-dice-d10"></i>
+        </button>
+
+        <!-- NAME -->
+        <input type="text"
+               data-index="{{this._index}}"
+               class="skill-name"
+               value="{{this.name}}"
+               placeholder="Skill name">
+
+        <!-- DELETE -->
+        <button type="button"
+                class="sw-button delete-skill"
+                data-index="{{this._index}}">
+          <i class="fas fa-trash"></i>
+        </button>
+
+      </div>
+    {{/each}}
+
+  </div>
+
+  {{/if}}
+
+{{/each}}

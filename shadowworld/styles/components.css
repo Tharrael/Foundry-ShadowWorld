@@ -1,0 +1,163 @@
+/* ========================= */
+/* ITEM ROW */
+/* ========================= */
+
+
+/* LEFT SIDE */
+.shadowworld.sheet.actor .inv-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* RIGHT SIDE (buttons) */
+.shadowworld.sheet.actor .inv-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* ========================= */
+/* INPUTS */
+/* ========================= */
+
+.shadowworld.sheet.actor .inv-main input,
+.shadowworld.sheet.actor .inv-main select {
+  height: 24px;
+  font-size: 12px;
+}
+
+.shadowworld.sheet.actor .inv-main input[type="number"] {
+  width: 50px;
+}
+
+/* ========================= */
+/* BUTTONS */
+/* ========================= */
+
+.shadowworld.sheet.actor .inv-actions button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: transparent;
+}
+
+.shadowworld.sheet.actor .inv-actions button:hover {
+  background: var(--accent);
+  color: black;
+}
+
+/* ========================= */
+/* HOVER */
+/* ========================= */
+
+
+/* ITEM CARD */
+.shadowworld.sheet.actor .inv-item {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  align-items: center;
+
+  padding: 10px 12px;
+  margin-bottom: 8px;
+
+  background: var(--bg-panel);
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}
+
+/* EQUIP */
+.shadowworld.sheet.actor .inv-equip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CONTENT */
+.shadowworld.sheet.actor .inv-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+/* ROWS */
+.shadowworld.sheet.actor .inv-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+/* TOP */
+.shadowworld.sheet.actor .inv-row--top {
+  justify-content: center;
+}
+
+.shadowworld.sheet.actor .inv-name {
+  width: 100%;
+  text-align: center;
+  font-size: 1.15em;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* TYPE */
+.shadowworld.sheet.actor .inv-type {
+  font-size: 0.75em;
+  color: var(--text-dim);
+  margin-left: 6px;
+}
+
+/* BOTTOM */
+.shadowworld.sheet.actor .inv-row--bottom {
+  justify-content: space-between;
+}
+
+/* PROPERTIES */
+.shadowworld.sheet.actor .inv-properties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  flex: 1;
+  align-items: center;
+
+  font-size: 0.85em;
+  color: var(--text-dim);
+}
+
+/* ACTIONS */
+.shadowworld.sheet.actor .inv-actions {
+  display: flex;
+  gap: 6px;
+}
+.shadowworld.sheet.actor .inv-properties span,
+.shadowworld.sheet.actor .inv-properties label {
+  
+  position: relative;
+  padding-right: 10px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  height: 24px; /* match select */
+}
+.shadowworld.sheet.actor select {
+  background: var(--bg-panel);
+  color: var(--text-main);
+  border: 1px solid var(--accent);
+}
+.shadowworld.sheet.actor select option {
+  background: var(--bg-panel);
+  color: var(--text-main);
+}
+.shadowworld.sheet.actor .sw-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}

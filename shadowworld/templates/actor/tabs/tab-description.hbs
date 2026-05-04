@@ -1,0 +1,25 @@
+<div class="description-section"> 
+
+  <!-- IMAGE -->
+  <div class="portrait">
+    <img class="profile-img" src="{{actor.img}}" data-edit="img">
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="basic-info">
+
+    {{> "systems/shadowworld/templates/actor/parts/hp.hbs"}}
+    
+    {{#if ../isGM}}
+      <div class="trait-select">
+        <select name="system.trait">
+          <option value="human">Human</option>
+          <option value="vampire">Vampire</option>
+          <option value="werewolf">Werewolf</option>
+        </select>
+      </div>
+    {{/if}}
+
+  </div>
+
+</div>

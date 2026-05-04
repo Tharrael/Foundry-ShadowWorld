@@ -1,0 +1,145 @@
+<div class="inventory-section">
+<h2>Inventory</h2>
+
+{{#each items as |item|}}
+<div class="item inv-item inv-item--{{item.type}}"
+     data-item-id="{{item.id}}">
+
+  <!-- LEFT: EQUIPPED -->
+  <div class="inv-equip">
+    <input type="checkbox"
+           class="item-equipped"
+           data-item-id="{{item.id}}"
+           {{checked item.system.equipped}}>
+  </div>
+
+  <!-- RIGHT CONTENT -->
+  <div class="inv-content">
+
+    <!-- TOP ROW -->
+    <div class="inv-row inv-row--top">
+      <div class="inv-name">
+        <strong>{{item.name}}</strong>
+        <span class="inv-type">({{item.type}})</span>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW -->
+    <div class="inv-row inv-row--bottom">
+
+      <!-- PROPERTIES -->
+      <div class="inv-properties">
+
+        {{#if item.system.consumable}}
+          <span>
+            Charges ({{item.system.charges}}/{{item.system.maxCharges}})
+          </span>
+        {{/if}}
+
+        <!-- WEAPON -->
+        {{#if (eq item.type "weapon")}}
+          <span>
+            Mag: ({{item.system.currentMagazine}} / {{item.system.magazineSize}})
+          </span>
+
+          <span>
+            <label>Ammo</label>
+            <select class="item-ammo" data-item-id="{{this.id}}">
+              <option value="">Základní</option>
+
+              {{#each ../ammoItems}}
+                <option value="{{this.id}}"
+                  {{#if (eq this.id ../this.system.loadedAmmoId)}}selected{{/if}}
+                  {{#if (eq this.system.quantity 0)}}disabled{{/if}}>
+                  {{this.name}} ({{this.system.quantity}})
+                </option>
+              {{/each}}
+            </select>
+          </span>
+
+          <span>
+            <label>Skill</label>
+            <select class="item-skill" data-item-id="{{item.id}}">
+              <option value="">{{item.system.linkedSkill}}</option>
+
+              {{#each ../system.skills}}
+                <option value="{{this.name}}"
+                  {{#if (eq this.name ../item.system.linkedSkill)}}selected{{/if}}>
+                  {{this.name}}
+                </option>
+              {{/each}}
+            </select>
+          </span>
+
+          <span>Damage: {{item.system.damage}}</span>
+
+          <span>
+            <label>Type</label>
+            <select class="item-damage-type" data-item-id="{{item.id}}">
+              <option value="lethal"
+                {{#if (eq item.system.damageType "lethal")}}selected{{/if}}>
+                Lethal
+              </option>
+
+              <option value="nonLethal"
+                {{#if (eq item.system.damageType "nonLethal")}}selected{{/if}}>
+                Non-lethal
+              </option>
+            </select>
+          </span>
+
+          <span>Bonus: {{item.system.bonus}}</span>
+        {{/if}}
+
+        <!-- UTILITY -->
+        {{#if (eq item.type "utility")}}
+          <span>
+            {{#each item.system.effects}}
+              ({{effectLabel this.type}} : {{this.value}}{{#unless @last}}, {{/unless}})
+            {{/each}}
+          </span>
+        {{/if}}
+
+        <!-- ARMOR -->
+        {{#if (eq item.type "armor")}}
+          <span>Armor Level: {{item.system.armor}}</span>
+          <span>Dex Penalty: {{item.system.dexPenalty}}</span>
+        {{/if}}
+
+        <!-- AMMO -->
+        {{#if (eq this.type "ammo")}}
+          <span>
+            {{#each this.system.effects}}
+              ({{effectLabel this.type}} : {{this.value}}{{#unless @last}} {{/unless}})
+            {{/each}}
+          </span>
+        {{/if}}
+
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="inv-actions">
+
+        <button type="button"
+                class="sw-button item-delete"
+                data-item-id="{{item.id}}">
+          <i class="fas fa-trash"></i>
+        </button>
+
+        {{#if item.system.consumable}}
+        <button type="button"
+                class="sw-button use-item"
+                data-item-id="{{item.id}}">
+          <i class="fas fa-bolt"></i>
+        </button>
+        {{/if}}
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+{{/each}}
+</div>

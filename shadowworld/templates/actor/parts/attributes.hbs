@@ -1,0 +1,31 @@
+<h2>Atributy</h2>
+
+<div class="attributes sw-attributes">
+
+  {{#each attributesList}}
+    {{#unless (eq key "hp")}}
+        <div class="attribute sw-attr-row">
+    
+          <!-- 🎲 ROLL BUTTON (vlevo) -->
+          <button type="button"
+                  class="sw-button roll-attribute"
+                  data-attr="{{key}}">
+            <i class="fas fa-dice-d10"></i>
+          </button>
+    
+          <!-- LABEL -->
+          <span class="attr-label">
+            {{lookup ../attributeLabels key}}
+          </span>
+    
+          <!-- VALUE -->
+          <input type="number"
+                 class="attr-input"
+                 name="system.attributes.{{key}}"
+                 value="{{value}}">
+    
+        </div>
+    {{/unless}}
+  {{/each}}
+
+</div>

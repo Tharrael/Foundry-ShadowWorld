@@ -1,0 +1,40 @@
+
+<label>Damage</label>
+<input type="text" name="system.damage" value="{{system.damage}}">
+
+<label>Damage Type</label>
+<select name="system.damageType">
+  <option value="lethal" {{#if (eq system.damageType "lethal")}}selected{{/if}}>Lethal</option>
+  <option value="nonLethal" {{#if (eq system.damageType "nonLethal")}}selected{{/if}}>Non-Lethal</option>
+</select>
+
+<br>
+<label>Bonus</label>
+<input type="number" name="system.bonus" value="{{system.bonus}}">
+<br>
+<div class="form-group">
+  <label>Magazine Size</label>
+  <input type="number"
+         name="system.magazineSize"
+         value="{{system.magazineSize}}"
+         min="0"/>
+</div>
+<br>
+<label>Ammo</label>
+<select name="system.loadedAmmoId">
+
+  <option value="">---None---</option>
+
+  {{#each actor.items}}
+    {{#if (eq this.type "ammo")}}
+      <option value="{{this.id}}"
+        {{#if (eq this.id ../system.loadedAmmoId)}}selected{{/if}}>
+        {{this.name}} ({{this.system.quantity}})
+      </option>
+    {{/if}}
+  {{/each}}
+
+</select>
+<br>
+<label>Equipped</label>
+<input type="checkbox" name="system.equipped" {{checked system.equipped}}>

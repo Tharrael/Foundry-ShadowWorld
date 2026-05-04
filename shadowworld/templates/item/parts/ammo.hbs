@@ -1,0 +1,45 @@
+<h3>Ammo</h3>
+
+<label>Quantity</label>
+<input type="number" name="system.quantity" value="{{system.quantity}}">
+
+<hr>
+
+<h3>Effects</h3>
+
+<div class="effects-list">
+
+  {{#each system.effects as |effect i|}}
+    <div class="effect-row" data-index="{{i}}">
+
+      <select class="effect-type" data-index="{{i}}">
+        <option value="">-- type --</option>
+        <option value="damage" {{#if (eq effect.type "damage")}}selected{{/if}}>Damage</option>
+        <option value="penetration" {{#if (eq effect.type "penetration")}}selected{{/if}}>Penetration</option>
+        <option value="heal" {{#if (eq effect.type "heal")}}selected{{/if}}>Heal</option>
+      </select>
+
+      <input type="text"
+             class="effect-value"
+             data-index="{{i}}"
+             value="{{effect.value}}"
+             placeholder="value (e.g. 1d4)" />
+
+      <input type="text"
+             class="effect-damageType"
+             data-index="{{i}}"
+             value="{{effect.damageType}}"
+             placeholder="damage type" />
+
+      <button type="button" class="effect-delete" data-index="{{i}}">
+        ✖
+      </button>
+
+    </div>
+  {{/each}}
+
+</div>
+
+<button type="button" class="effect-add">
+  + Add Effect
+</button>

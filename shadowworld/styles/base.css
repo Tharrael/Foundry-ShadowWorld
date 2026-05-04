@@ -1,0 +1,28 @@
+/* ========================= */
+/* 🎨 BASE VARIABLES */
+/* ========================= */
+
+.shadowworld.sheet.actor {
+  --bg-main: #2b2f35;
+  --bg-panel: #383f47;
+  --bg-soft: #c7bfaf;
+
+  --gold: #f1d69f;
+  --accent: #4e676e;
+
+  --text-main: #e6e6e6;
+  --text-dim: #9aa0a6;
+  --radius: 10px;
+}
+.sw-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 8px;
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+
+  background: var(--bg-panel);
+  border: 1px solid var(--gold);
+}
