@@ -19,3 +19,19 @@
   margin-bottom: 6px;
   color: var(--gold);
 }
+
+.shadowworld.sheet.actor .inv-item[draggable="true"] {
+  cursor: move;
+}
+
+.shadowworld.sheet.actor .inv-item.dragging {
+  opacity: 0.6;
+}
+
+.shadowworld.sheet.actor .inv-item.drop-before {
+  box-shadow: inset 0 3px 0 var(--gold);
+}
+
+.shadowworld.sheet.actor .inv-item.drop-after {
+  box-shadow: inset 0 -3px 0 var(--gold);
+}
