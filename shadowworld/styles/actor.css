@@ -306,14 +306,42 @@
   align-items: start;
 }
 
+.description-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 /* IMAGE */
 .portrait {
   width: 100%;
+  max-width: 420px;
 }
 .portrait .profile-img {
-  width: 100%;
+  width: 420px;
+  height: 420px;
+  object-fit: cover;
+  max-width: 100%;
   border-radius: 10px;
   border: 1px solid var(--gold);
+}
+
+.description-left-column .journal .editor {
+  min-height: 260px;
+}
+
+.description-left-column .journal-panel {
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 10px;
+  background: var(--bg-panel);
+}
+
+.description-left-column .journal-panel-title {
+  margin: 0 0 8px 0;
+  color: var(--gold);
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 /* RIGHT COLUMN */

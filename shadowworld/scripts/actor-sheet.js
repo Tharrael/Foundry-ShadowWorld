@@ -449,6 +449,17 @@ export class ShadowWorldActorSheet extends ActorSheet {
 
     await item.delete();
   });
+
+  html.find(".inv-item, .eq-item").on("dblclick", async ev => {
+    if ($(ev.target).closest("button,input,select,textarea,label,a").length) return;
+
+    const itemId = ev.currentTarget.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    if (!item) return;
+
+    item.sheet.render(true);
+  });
+
   html.find(".roll-weapon").click(async ev => {
 
      if (ev.originalEvent?.detail === 0) return;
@@ -555,11 +566,14 @@ export class ShadowWorldActorSheet extends ActorSheet {
     const amount = roll.total;
 
     // 💬 CHAT MESSAGE (Foundry styl)
+    const itemDescription = item.system?.description?.trim();
+
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       flavor: `
         ${item.name} - Heal<br>
         Formula: ${healFormula}<br><br>
+        ${itemDescription ? `<div class="item-description-chat">${itemDescription}</div><br>` : ""}
         <button class="apply-heal"
           data-heal="${amount}">
           Apply Heal
