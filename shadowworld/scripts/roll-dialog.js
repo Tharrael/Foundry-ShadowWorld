@@ -106,7 +106,8 @@ export async function openRollDialog({
           console.log("USED ITEM:", usedItem?.name);          
           const rollData = {
             actor,
-            attribute: skill?.attribute || selectedAttr,
+            // hráč může v dialogu přepsat primární atribut skillu (např. chill check)
+            attribute: selectedAttr,
             skill: skill?.level || skillLevel,
             item: usedItem,
             modifier,

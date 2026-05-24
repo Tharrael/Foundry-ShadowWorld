@@ -9,10 +9,10 @@ export class ShadowWorldItemSheet extends ItemSheet {
         });
     }
 
-  getData() {
-    const context = super.getData();
+  async getData() {
+    const context = await super.getData();
     context.system = this.item.system;
-    context.editable = this.isEditable;
+    context.editable = this.options.editable ?? this.isEditable;
     return context;
   }
   async _updateObject(event, formData) {
