@@ -20,6 +20,7 @@ export async function useConsumable(actor, item) {
   });
 
   console.log("EFFECT RESULT:", result);
+  const itemDescription = item.system?.description?.trim() || "";
 
   let used = false;
 
@@ -34,6 +35,7 @@ export async function useConsumable(actor, item) {
       speaker: ChatMessage.getSpeaker({ actor }),
       flavor: `
         ${actor.name} used ${item.name} on ${target.name}<br><br>
+        ${itemDescription ? `<div class="item-description-chat">${itemDescription}</div><br>` : ""}
         <button class="apply-heal"
           data-heal="${amount}">
           Apply Heal
@@ -65,6 +67,7 @@ export async function useConsumable(actor, item) {
       flavor: `
         ${actor.name} used ${item.name} <br>
         Type: ${result.damageType || "lethal"}<br><br>
+        ${itemDescription ? `<div class="item-description-chat">${itemDescription}</div><br>` : ""}
         <button class="apply-damage" data-damage="${rawDamage}" data-type="${result.damageType || "lethal"}" data-penetration="${result.penetrationBonus ||0}">
           Apply Damage
         </button>

@@ -157,7 +157,20 @@ export class ShadowWorldActorSheet extends ActorSheet {
     // 👉 pošleme do template
     context.skillsByLevel = skillsByLevel;
     
-    const items = this.actor.items.contents;
+    const getGroupRank = (item) => {
+      if (item.type === "weapon") return 0;
+      if (item.type === "armor") return 1;
+      if (item.type === "utility" && !item.system?.consumable) return 2;
+      if (item.system?.consumable) return 3;
+      if (item.type === "ammo") return 4;
+      return 99;
+    };
+
+    const items = [...this.actor.items.contents].sort((a, b) => {
+      const groupDiff = getGroupRank(a) - getGroupRank(b);
+      if (groupDiff !== 0) return groupDiff;
+      return (a.sort ?? 0) - (b.sort ?? 0);
+    });
     context.items = items;
     context.equippedItems = items.filter(i => i.system?.equipped===true);
     context.ammoItems = items.filter(i => i.type === "ammo");
@@ -436,6 +449,17 @@ export class ShadowWorldActorSheet extends ActorSheet {
 
     await item.delete();
   });
+
+  html.find(".inv-item, .eq-item").on("dblclick", async ev => {
+    if ($(ev.target).closest("button,input,select,textarea,label,a").length) return;
+
+    const itemId = ev.currentTarget.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    if (!item) return;
+
+    item.sheet.render(true);
+  });
+
   html.find(".roll-weapon").click(async ev => {
 
      if (ev.originalEvent?.detail === 0) return;
@@ -479,7 +503,9 @@ export class ShadowWorldActorSheet extends ActorSheet {
             });
           }
 
-          formula += "+" + effectsResult.damageFormula;
+          if (effectsResult.damageFormula) {
+            formula += `+${effectsResult.damageFormula}`;
+          }
           penetration += effectsResult.penetrationBonus;
                 }
 
@@ -540,11 +566,14 @@ export class ShadowWorldActorSheet extends ActorSheet {
     const amount = roll.total;
 
     // 💬 CHAT MESSAGE (Foundry styl)
+    const itemDescription = item.system?.description?.trim();
+
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       flavor: `
         ${item.name} - Heal<br>
         Formula: ${healFormula}<br><br>
+        ${itemDescription ? `<div class="item-description-chat">${itemDescription}</div><br>` : ""}
         <button class="apply-heal"
           data-heal="${amount}">
           Apply Heal
@@ -724,6 +753,98 @@ export class ShadowWorldActorSheet extends ActorSheet {
 
   });
 
+  this._activateInventorySorting(html);
+
+}
+
+_activateInventorySorting(html) {
+  let draggedItemId = null;
+  const getTypeGroup = (item) => {
+    if (!item) return null;
+    if (item.type === "weapon") return "weapon";
+    if (item.type === "armor") return "armor";
+    if (item.type === "utility" && !item.system?.consumable) return "utility";
+    if (item.system?.consumable) return "consumable";
+    if (item.type === "ammo") return "ammo";
+    return null;
+  };
+
+  html.find(".inv-item[draggable='true']").on("dragstart", (ev) => {
+    const itemId = ev.currentTarget.dataset.itemId;
+    if (!itemId) return;
+
+    draggedItemId = itemId;
+    ev.currentTarget.classList.add("dragging");
+
+    if (ev.originalEvent?.dataTransfer) {
+      ev.originalEvent.dataTransfer.setData("text/plain", itemId);
+      ev.originalEvent.dataTransfer.effectAllowed = "move";
+    }
+  });
+
+  html.find(".inv-item").on("dragover", (ev) => {
+    ev.preventDefault();
+    const targetEl = ev.currentTarget;
+    const bounds = targetEl.getBoundingClientRect();
+    const insertBefore = ev.originalEvent?.clientY < (bounds.top + bounds.height / 2);
+    targetEl.classList.toggle("drop-before", Boolean(insertBefore));
+    targetEl.classList.toggle("drop-after", !insertBefore);
+
+    if (ev.originalEvent?.dataTransfer) {
+      ev.originalEvent.dataTransfer.dropEffect = "move";
+    }
+  });
+
+  html.find(".inv-item").on("dragleave", (ev) => {
+    ev.currentTarget.classList.remove("drop-before", "drop-after");
+  });
+
+  html.find(".inv-item").on("drop", async (ev) => {
+    ev.preventDefault();
+    const targetEl = ev.currentTarget;
+    targetEl.classList.remove("drop-before", "drop-after");
+
+    const targetId = ev.currentTarget.dataset.itemId;
+    const sourceId = draggedItemId || ev.originalEvent?.dataTransfer?.getData("text/plain");
+
+    if (!sourceId || !targetId || sourceId === targetId) return;
+
+    const source = this.actor.items.get(sourceId);
+    const target = this.actor.items.get(targetId);
+    if (!source || !target) return;
+    if (getTypeGroup(source) !== getTypeGroup(target)) {
+      ui.notifications.warn("Items can only be reordered inside their own type group.");
+      return;
+    }
+
+    const bounds = targetEl.getBoundingClientRect();
+    const insertBefore = ev.originalEvent?.clientY < (bounds.top + bounds.height / 2);
+    const groupItems = [...this.actor.items.contents]
+      .filter(i => getTypeGroup(i) === getTypeGroup(source))
+      .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+
+    const sourceIndex = groupItems.findIndex(i => i.id === sourceId);
+    const targetIndex = groupItems.findIndex(i => i.id === targetId);
+    if (sourceIndex < 0 || targetIndex < 0) return;
+
+    const [moved] = groupItems.splice(sourceIndex, 1);
+    const targetIndexAfterRemoval = groupItems.findIndex(i => i.id === targetId);
+    const insertIndex = targetIndexAfterRemoval + (insertBefore ? 0 : 1);
+    groupItems.splice(insertIndex, 0, moved);
+
+    const sortUpdates = groupItems.map((item, index) => ({
+      _id: item.id,
+      sort: (index + 1) * 100000
+    }));
+
+    await this.actor.updateEmbeddedDocuments("Item", sortUpdates);
+    this.render(false);
+  });
+
+  html.find(".inv-item").on("dragend", (ev) => {
+    draggedItemId = null;
+    ev.currentTarget.classList.remove("dragging");
+  });
 }
 
 }
