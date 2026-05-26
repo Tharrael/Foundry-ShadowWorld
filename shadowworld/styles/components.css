@@ -161,3 +161,24 @@
   padding: 10px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
+
+/* ========================= */
+/* ITEM SHEET DESCRIPTION */
+/* ========================= */
+.shadowworld.sheet.item .item-description {
+  margin-top: 10px;
+}
+
+.shadowworld.sheet.item .item-description .editor {
+  min-height: 2.1em;
+  height: auto;
+}
+
+.shadowworld.sheet.item .item-description .editor-content {
+  min-height: 2.1em;
+  height: auto;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 6px;
+  overflow: auto;
+}

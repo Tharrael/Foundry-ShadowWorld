@@ -4,15 +4,24 @@ export class ShadowWorldItemSheet extends ItemSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
         classes: ["shadowworld", "sheet", "item"],
         template: "systems/shadowworld/templates/item/item-sheet.hbs",
-        width: 400,
-        height: 300
+        width: 520,
+        height: 620,
+        submitOnChange: true,
+        submitOnClose: true
         });
     }
 
-  async getData() {
-    const context = await super.getData();
+  async getData(options = {}) {
+    const context = await super.getData(options);
     context.system = this.item.system;
-    context.editable = this.options.editable ?? this.isEditable;
+    context.editable = this.isEditable;
+    console.log("ShadowWorldItemSheet|getData", {
+      item: this.item?.name,
+      type: this.item?.type,
+      editable: context.editable,
+      hasDescription: Boolean(context.system?.description),
+      descriptionLength: context.system?.description?.length ?? 0
+    });
     return context;
   }
   async _updateObject(event, formData) {
@@ -21,6 +30,11 @@ export class ShadowWorldItemSheet extends ItemSheet {
 
   activateListeners(html) {
   super.activateListeners(html);
+    console.log("ShadowWorldItemSheet|activateListeners", {
+      item: this.item?.name,
+      editable: this.isEditable,
+      owner: this.item?.isOwner
+    });
 
     // 🔥 auto-submit při změně
     html.find("input[type='text'], input[type='number'], textarea").change(ev => this._onSubmit(ev));

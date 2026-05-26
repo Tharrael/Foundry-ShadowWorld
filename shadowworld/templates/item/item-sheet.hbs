@@ -1,8 +1,8 @@
-<form class= "item-sheet">
+<form class="{{cssClass}} item-sheet" autocomplete="off">
 
-<h2><div class="item-name">
-    <input type="text" name="name" value="{{item.name}}" placeholder="Item name">
-  </div></h2>
+<h2 class="item-name">
+  <input type="text" name="name" value="{{item.name}}" placeholder="Item name">
+</h2>
 
 {{> "systems/shadowworld/templates/item/parts/item-header.hbs"}}
 
