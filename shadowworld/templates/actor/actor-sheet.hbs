@@ -1,6 +1,8 @@
 <form class=""{{cssClass}} autocomplete=""off">
 <div class="sheet-header">
-<h1>{{actor.name}}</h1>
+  <span class="actor-name-label">Agent Name:</span>
+  <input class="actor-name-input" type="text" name="name" value="{{actor.name}}" aria-label="Agent Name">
+  <span class="actor-status">Status : Agent</span>
 </div>
 <nav class="sheet-tabs tabs" data-group="primary">
   <a class="item" data-tab="description">Popis</a>

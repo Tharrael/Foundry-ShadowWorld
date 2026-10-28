@@ -92,24 +92,40 @@
   border-bottom: 1px solid var(--gold);
 }
 
-.shadowworld.sheet.actor .sheet-header h1::before {
-  content: "Agent Name:  ";
+.shadowworld.sheet.actor .sheet-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.shadowworld.sheet.actor .actor-name-label {
   font-size: 0.8em;
   color: var(--text-dim);
   margin-left: 10px;
 }
-.shadowworld.sheet.actor .sheet-header h1::after {
-  content: "Status : Agent";
-  position: absolute;
-  right: 0;
-  
+.shadowworld.sheet.actor .actor-name-input {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--gold);
+  font-size: 1.8em;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.shadowworld.sheet.actor .actor-name-input:focus {
+  outline: 1px solid var(--gold);
+  outline-offset: 3px;
+}
+.shadowworld.sheet.actor .actor-status {
+  flex: none;
   font-size: 0.6em;
-  
   color: var(--text-dim);
-
   margin-right: 25px;
- 
-
 }
 
 /* REMOVE RED LINE FROM WINDOW HEADER */
