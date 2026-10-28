@@ -757,34 +757,87 @@ export class ShadowWorldActorSheet extends ActorSheet {
 
 _activateInventorySorting(html) {
   let draggedItemId = null;
+  let activeDragTraceId = null;
   const dragDataType = "application/x-shadowworld-actor-item";
+  const logDrag = (step, details = {}) => {
+    console.info(`ShadowWorld | Inventory drag | ${step}`, {
+      traceId: activeDragTraceId,
+      targetActor: this.actor?.name,
+      targetActorUuid: this.actor?.uuid,
+      ...details
+    });
+  };
   const readActorItemDragData = (event) => {
     const transfer = event?.originalEvent?.dataTransfer;
-    if (!transfer) return null;
+    if (!transfer) {
+      logDrag("drop-data-transfer-missing", { eventType: event?.type });
+      return null;
+    }
 
     try {
       const raw = transfer.getData(dragDataType);
+      logDrag("drop-payload-read", {
+        eventType: event?.type,
+        availableTypes: Array.from(transfer.types ?? []),
+        customPayloadPresent: Boolean(raw)
+      });
       return raw ? JSON.parse(raw) : null;
     } catch (error) {
-      console.warn("ShadowWorld | Could not read dragged item data", error);
+      console.warn("ShadowWorld | Inventory drag | drop-payload-parse-failed", error);
       return null;
     }
   };
 
   const handleActorItemDrop = async (event) => {
     const data = readActorItemDragData(event);
-    if (!data?.actorUuid || !data?.itemUuid || data.actorUuid === this.actor.uuid) return false;
+    if (!data?.actorUuid || !data?.itemUuid) {
+      logDrag("cross-actor-drop-not-handled", {
+        reason: "missing-actor-or-item-uuid",
+        eventType: event?.type,
+        payloadKeys: data ? Object.keys(data) : []
+      });
+      return false;
+    }
+    if (data.actorUuid === this.actor.uuid) {
+      logDrag("cross-actor-drop-not-handled", { reason: "same-actor", itemUuid: data.itemUuid });
+      return false;
+    }
 
     event.preventDefault();
     event.stopPropagation();
+    activeDragTraceId = data.traceId ?? activeDragTraceId;
+    logDrag("cross-actor-drop-accepted", {
+      eventType: event?.type,
+      sourceActorUuid: data.actorUuid,
+      sourceItemUuid: data.itemUuid
+    });
 
-    const sourceItem = await fromUuid(data.itemUuid);
+    let sourceItem;
+    try {
+      sourceItem = await fromUuid(data.itemUuid);
+      logDrag("source-item-resolved", {
+        sourceItemFound: Boolean(sourceItem),
+        sourceItemName: sourceItem?.name,
+        sourceActorUuid: sourceItem?.parent?.uuid
+      });
+    } catch (error) {
+      console.error("ShadowWorld | Inventory drag | source-item-resolve-failed", error);
+      ui.notifications.warn("The dragged item could not be loaded.");
+      return true;
+    }
     const sourceActor = sourceItem?.parent;
     if (!sourceItem || !sourceActor || sourceActor.uuid !== data.actorUuid) {
+      logDrag("source-item-validation-failed", {
+        sourceItemFound: Boolean(sourceItem),
+        sourceActorFound: Boolean(sourceActor),
+        expectedSourceActorUuid: data.actorUuid,
+        actualSourceActorUuid: sourceActor?.uuid
+      });
       ui.notifications.warn("The dragged item is no longer available.");
       return true;
     }
 
+    logDrag("choice-dialog-opening", { sourceItemName: sourceItem.name });
     new Dialog({
       title: "Move item between characters",
       content: "<p>Choose how to add the dragged item to this character.</p>",
@@ -792,17 +845,20 @@ _activateInventorySorting(html) {
         copy: {
           label: "Copy",
           callback: async () => {
+            logDrag("copy-selected", { sourceItemName: sourceItem.name });
             try {
               if (!sourceActor.items.has(sourceItem.id)) {
+                logDrag("copy-aborted-source-missing", { sourceItemId: sourceItem.id });
                 ui.notifications.warn("The dragged item is no longer available.");
                 return;
               }
               const itemData = sourceItem.toObject();
               delete itemData._id;
-              await this.actor.createEmbeddedDocuments("Item", [itemData]);
+              const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+              logDrag("copy-completed", { createdItemId: createdItem?.id, sourceItemName: sourceItem.name });
               ui.notifications.info(`${sourceItem.name} copied to ${this.actor.name}.`);
             } catch (error) {
-              console.error("ShadowWorld | Failed to copy actor item", error);
+              console.error("ShadowWorld | Inventory drag | copy-failed", error);
               ui.notifications.error("The item could not be copied.");
             }
           }
@@ -810,8 +866,10 @@ _activateInventorySorting(html) {
         transfer: {
           label: "Transfer",
           callback: async () => {
+            logDrag("transfer-selected", { sourceItemName: sourceItem.name });
             try {
               if (!sourceActor.items.has(sourceItem.id)) {
+                logDrag("transfer-aborted-source-missing", { sourceItemId: sourceItem.id });
                 ui.notifications.warn("The dragged item is no longer available.");
                 return;
               }
@@ -820,13 +878,19 @@ _activateInventorySorting(html) {
               const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
               try {
                 await sourceActor.deleteEmbeddedDocuments("Item", [sourceItem.id]);
+                logDrag("transfer-source-deleted", { sourceItemId: sourceItem.id });
               } catch (error) {
+                logDrag("transfer-source-delete-failed-rolling-back", {
+                  createdItemId: createdItem?.id,
+                  sourceItemId: sourceItem.id
+                });
                 await this.actor.deleteEmbeddedDocuments("Item", [createdItem.id]);
                 throw error;
               }
+              logDrag("transfer-completed", { createdItemId: createdItem?.id, sourceItemName: sourceItem.name });
               ui.notifications.info(`${sourceItem.name} transferred to ${this.actor.name}.`);
             } catch (error) {
-              console.error("ShadowWorld | Failed to transfer actor item", error);
+              console.error("ShadowWorld | Inventory drag | transfer-failed", error);
               ui.notifications.error("The item could not be transferred completely.");
             }
           }
@@ -834,6 +898,7 @@ _activateInventorySorting(html) {
       },
       default: "copy"
     }).render(true);
+    logDrag("choice-dialog-rendered", { sourceItemName: sourceItem.name });
 
     return true;
   };
@@ -850,22 +915,50 @@ _activateInventorySorting(html) {
 
   html.find(".inv-item[draggable='true']").on("dragstart", (ev) => {
     const itemId = ev.currentTarget.dataset.itemId;
-    if (!itemId) return;
+    activeDragTraceId = `inventory-drag-${Date.now()}`;
+    if (!itemId) {
+      logDrag("dragstart-aborted-no-item-id", { eventType: ev.type });
+      return;
+    }
 
     draggedItemId = itemId;
     ev.currentTarget.classList.add("dragging");
+    const item = this.actor.items.get(itemId);
+    logDrag("dragstart", {
+      eventType: ev.type,
+      sourceActorUuid: this.actor?.uuid,
+      sourceItemId: itemId,
+      sourceItemUuid: item?.uuid,
+      sourceItemName: item?.name,
+      dataTransferAvailable: Boolean(ev.originalEvent?.dataTransfer)
+    });
 
     if (ev.originalEvent?.dataTransfer) {
-      const item = this.actor.items.get(itemId);
       if (item) {
         ev.originalEvent.dataTransfer.setData(dragDataType, JSON.stringify({
+          traceId: activeDragTraceId,
           actorUuid: this.actor.uuid,
           itemUuid: item.uuid
         }));
       }
       ev.originalEvent.dataTransfer.setData("text/plain", itemId);
       ev.originalEvent.dataTransfer.effectAllowed = "copyMove";
+      logDrag("dragstart-payload-written", {
+        itemId,
+        dataTransferTypes: Array.from(ev.originalEvent.dataTransfer.types ?? [])
+      });
+    } else {
+      console.warn("ShadowWorld | Inventory drag | dragstart-data-transfer-missing", { itemId });
     }
+  });
+
+  html.find(".inv-item").on("dragenter", (ev) => {
+    logDrag("dragenter", {
+      eventType: ev.type,
+      targetClass: ev.currentTarget?.className,
+      targetItemId: ev.currentTarget?.dataset?.itemId,
+      dataTransferTypes: Array.from(ev.originalEvent?.dataTransfer?.types ?? [])
+    });
   });
 
   html.find(".inv-item").on("dragover", (ev) => {
@@ -886,6 +979,11 @@ _activateInventorySorting(html) {
   });
 
   html.find(".inv-item").on("drop", async (ev) => {
+    logDrag("item-drop-received", {
+      eventType: ev.type,
+      targetItemId: ev.currentTarget.dataset.itemId,
+      dataTransferTypes: Array.from(ev.originalEvent?.dataTransfer?.types ?? [])
+    });
     ev.preventDefault();
     const targetEl = ev.currentTarget;
     targetEl.classList.remove("drop-before", "drop-after");
@@ -895,12 +993,27 @@ _activateInventorySorting(html) {
     const targetId = ev.currentTarget.dataset.itemId;
     const sourceId = draggedItemId || ev.originalEvent?.dataTransfer?.getData("text/plain");
 
-    if (!sourceId || !targetId || sourceId === targetId) return;
+    if (!sourceId || !targetId || sourceId === targetId) {
+      logDrag("local-sort-drop-ignored", { sourceId, targetId, reason: "missing-or-same-item" });
+      return;
+    }
 
     const source = this.actor.items.get(sourceId);
     const target = this.actor.items.get(targetId);
-    if (!source || !target) return;
+    if (!source || !target) {
+      logDrag("local-sort-drop-ignored", {
+        sourceFound: Boolean(source),
+        targetFound: Boolean(target),
+        sourceId,
+        targetId
+      });
+      return;
+    }
     if (getTypeGroup(source) !== getTypeGroup(target)) {
+      logDrag("local-sort-drop-rejected-type-mismatch", {
+        sourceType: getTypeGroup(source),
+        targetType: getTypeGroup(target)
+      });
       ui.notifications.warn("Items can only be reordered inside their own type group.");
       return;
     }
@@ -926,7 +1039,17 @@ _activateInventorySorting(html) {
     }));
 
     await this.actor.updateEmbeddedDocuments("Item", sortUpdates);
+    logDrag("local-sort-drop-completed", { sourceId, targetId, itemCount: sortUpdates.length });
     this.render(false);
+  });
+
+  html.find(".inventory-section").on("dragenter", (ev) => {
+    logDrag("inventory-section-dragenter", {
+      eventType: ev.type,
+      targetTag: ev.target?.tagName,
+      targetClass: ev.target?.className,
+      dataTransferTypes: Array.from(ev.originalEvent?.dataTransfer?.types ?? [])
+    });
   });
 
   html.find(".inventory-section").on("dragover", (ev) => {
@@ -935,11 +1058,25 @@ _activateInventorySorting(html) {
   });
 
   html.find(".inventory-section").on("drop", async (ev) => {
-    if (ev.target.closest(".inv-item")) return;
+    logDrag("inventory-section-drop-received", {
+      eventType: ev.type,
+      targetTag: ev.target?.tagName,
+      targetClass: ev.target?.className,
+      dataTransferTypes: Array.from(ev.originalEvent?.dataTransfer?.types ?? [])
+    });
+    if (ev.target.closest(".inv-item")) {
+      logDrag("inventory-section-drop-delegated-to-item", { targetItemId: ev.target.closest(".inv-item")?.dataset?.itemId });
+      return;
+    }
     await handleActorItemDrop(ev);
   });
 
   html.find(".inv-item").on("dragend", (ev) => {
+    logDrag("dragend", {
+      eventType: ev.type,
+      sourceItemId: draggedItemId,
+      dropEffect: ev.originalEvent?.dataTransfer?.dropEffect
+    });
     draggedItemId = null;
     ev.currentTarget.classList.remove("dragging");
   });
