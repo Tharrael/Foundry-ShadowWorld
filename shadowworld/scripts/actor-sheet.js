@@ -41,8 +41,6 @@ export class ShadowWorldActorSheet extends ActorSheet {
 
             const attr = html.find('[name="attribute"]').val();
 
-            console.log("SELECTED ATTRIBUTE:", attr); // 👈 DEBUG
-
             // 🔥 KRITICKÁ ČÁST
             const skills = Array.from(this.actor.system.skills || []);
 
@@ -51,12 +49,9 @@ export class ShadowWorldActorSheet extends ActorSheet {
               attribute: attr
             };
 
-            console.log("UPDATED SKILL:", skills[index]); // 👈 DEBUG
-
             await this.actor.update({
               "system.skills": skills
             });
-            console.log("AFTER UPDATE ACTOR:", this.actor.system.skills);
           }
         }
       }
@@ -94,8 +89,6 @@ export class ShadowWorldActorSheet extends ActorSheet {
   async getData() {
     const context = await super.getData();
     
-    console.log("GET DATA:", context);
-    console.log("RENDER ACTOR SHEET START");
 
     const equipped = this.actor.items.filter(i => i.system.equipped);
 
@@ -184,19 +177,7 @@ export class ShadowWorldActorSheet extends ActorSheet {
     context.equippedItems = items.filter(i => i.system?.equipped===true);
     context.ammoItems = items.filter(i => i.type === "ammo");
 
-    console.log("RAW ITEMS:", items);
     
-
-    items.forEach(i => {
-      console.log("ITEM Equipped?:", i.name, i.system?.equipped);
-      console.log("type checked:", i.name, i.system?.equipped, typeof i.system?.equipped);
-    });
-
-    
-
-    
-    
-    console.log("QUIPPED ITEMS:", context.equippedItems);
 
     return context;
     
@@ -299,9 +280,6 @@ export class ShadowWorldActorSheet extends ActorSheet {
     const skills = actor.toObject().system.skills || [];
     const skill = skills[index];
 
-     console.log("CLICKED INDEX:", index);
-      console.log("ALL SKILLS:", skills);
-      console.log("CLICKED SKILL:", skill);
 
     if (!skill) return;
 
@@ -313,8 +291,6 @@ export class ShadowWorldActorSheet extends ActorSheet {
     allowItemSelect: true
     });
 
-    console.log("SKILL ATTRIBUTE:", skill.attribute);
-    console.log("SKILL:", skill);
 
   });
   
@@ -349,7 +325,6 @@ export class ShadowWorldActorSheet extends ActorSheet {
     const path = input.name; // např. system.skillLimits.1
     const value = Number(input.value) || 0;
 
-    console.log("GM LIMIT UPDATE:", path, value);
 
     await this.actor.update({
       [path]: value
@@ -364,7 +339,6 @@ export class ShadowWorldActorSheet extends ActorSheet {
     const path = input.name; // např. system.attributes.dex
     const value = Number(input.value) || 0;
 
-    console.log("ATTRIBUTE UPDATE:", path, value);
 
     await this.actor.update({
       [path]: value
@@ -379,7 +353,6 @@ export class ShadowWorldActorSheet extends ActorSheet {
     const path = input.name; // např. system.attributes.dex
     const value = Number(input.value) || 0;
 
-    console.log("HP UPDATE:", path, value);
 
     await this.actor.update({
       [path]: value
@@ -397,7 +370,6 @@ export class ShadowWorldActorSheet extends ActorSheet {
 
     const value = checkbox.checked;
 
-    console.log("UPDATING EQUIPPED:", item.name, value);
 
     // 🔥 POUZE PŘI ZAPÍNÁNÍ (equip)
     if (value) {
@@ -539,6 +511,12 @@ export class ShadowWorldActorSheet extends ActorSheet {
         data-penetration="${penetration}">
         Damage
       </button>
+      <button class="apply-partial-damage"
+        data-damage="${rawDamage}"
+        data-type="${item.system.damageType}"
+        data-penetration="${penetration}">
+        Partial damage
+      </button>
     `
     });
   });
@@ -612,7 +590,6 @@ export class ShadowWorldActorSheet extends ActorSheet {
     const ammoId = item.system.loadedAmmoId;
 
     const mag = item.system.currentMagazine || 0;
-    console.log("kapacita zásobníku:", mag);
 
     if (mag <= 0) {
       swNotify("Reload!", "warn", 3000);;
@@ -708,7 +685,6 @@ export class ShadowWorldActorSheet extends ActorSheet {
 
     await item.update(updateData);
 
-    console.log("CONSUMABLE USED:", item.name);
 
   });
   
@@ -723,7 +699,6 @@ export class ShadowWorldActorSheet extends ActorSheet {
 
     if (!item) return;
 
-    console.log("UPDATING AMMO:", item.name, ammoId);
 
     await item.update({
       "system.loadedAmmoId": ammoId
@@ -755,7 +730,6 @@ export class ShadowWorldActorSheet extends ActorSheet {
   swNotify("Reloaded", "info", 2000);
 
   
-  console.log("RELOAD CLICKED");
 
   });
 
@@ -778,16 +752,40 @@ _activateInventorySorting(html) {
     Array.from(event.dataTransfer?.types ?? []).includes(dragDataType);
   const isInventoryDropTarget = (event) => {
     const target = event.target instanceof Element ? event.target : event.target?.parentElement;
-    const inventory = target?.closest(".inventory-section");
-    return Boolean(inventory && sheetElement?.contains(inventory));
+    // The section around the heading has no height when inventory is empty. Use the
+    // active inventory tab as the drop zone so empty sheets still accept dragged items.
+    const inventoryTab = target?.closest('.tab[data-tab="inventory"]');
+    const inventorySection = target?.closest(".inventory-section");
+    if (inventoryTab || inventorySection) {
+      const dropZone = inventoryTab ?? inventorySection;
+      if (sheetElement?.contains(dropZone)) return true;
+    }
+
+    // In an empty sheet the tab shrinks to its heading, so drops in the remaining
+    // visible inventory area target the parent form instead of the tab element.
+    const sheetForm = target?.closest("form");
+    const activeInventoryTab = sheetForm?.querySelector('.tab[data-tab="inventory"].active');
+    const sheetTabs = sheetForm?.querySelector(".sheet-tabs");
+    const formRect = sheetForm?.getBoundingClientRect();
+    const tabsRect = sheetTabs?.getBoundingClientRect();
+    const pointerInInventoryArea = Boolean(
+      formRect && tabsRect &&
+      event.clientX >= formRect.left && event.clientX <= formRect.right &&
+      event.clientY >= tabsRect.bottom && event.clientY <= formRect.bottom
+    );
+    return Boolean(
+      activeInventoryTab && sheetElement?.contains(sheetForm) && pointerInInventoryArea
+    );
   };
   const fallbackDragOver = (event) => {
-    if (!hasShadowWorldDragData(event) || !isInventoryDropTarget(event)) return;
+    if (!hasShadowWorldDragData(event)) return;
+    if (!isInventoryDropTarget(event)) return;
     event.preventDefault();
     if (event.dataTransfer) event.dataTransfer.dropEffect = "copy";
   };
   const fallbackDrop = (event) => {
-    if (!hasShadowWorldDragData(event) || !isInventoryDropTarget(event)) return;
+    if (!hasShadowWorldDragData(event)) return;
+    if (!isInventoryDropTarget(event)) return;
     logDrag("document-drop-fallback-received", {
       eventType: event.type,
       targetTag: event.target?.tagName,
@@ -822,14 +820,7 @@ _activateInventorySorting(html) {
     document.addEventListener(type, handler, true);
   });
 
-  const logDrag = (step, details = {}) => {
-    console.info(`ShadowWorld | Inventory drag | ${step}`, {
-      traceId: activeDragTraceId,
-      targetActor: this.actor?.name,
-      targetActorUuid: this.actor?.uuid,
-      ...details
-    });
-  };
+  const logDrag = () => {};
   const readActorItemDragData = (event) => {
     const transfer = event?.originalEvent?.dataTransfer;
     if (!transfer) {
@@ -849,6 +840,15 @@ _activateInventorySorting(html) {
       console.warn("ShadowWorld | Inventory drag | drop-payload-parse-failed", error);
       return null;
     }
+  };
+
+  const getActorItemDataForDestination = (item) => {
+    const itemData = item.toObject();
+    delete itemData._id;
+    itemData.system ??= {};
+    itemData.system.equipped = false;
+    itemData.system.linkedSkill = "";
+    return itemData;
   };
 
   const handleActorItemDrop = async (event) => {
@@ -915,8 +915,7 @@ _activateInventorySorting(html) {
                 ui.notifications.warn("The dragged item is no longer available.");
                 return;
               }
-              const itemData = sourceItem.toObject();
-              delete itemData._id;
+              const itemData = getActorItemDataForDestination(sourceItem);
               const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
               logDrag("copy-completed", { createdItemId: createdItem?.id, sourceItemName: sourceItem.name });
               ui.notifications.info(`${sourceItem.name} copied to ${this.actor.name}.`);
@@ -936,8 +935,7 @@ _activateInventorySorting(html) {
                 ui.notifications.warn("The dragged item is no longer available.");
                 return;
               }
-              const itemData = sourceItem.toObject();
-              delete itemData._id;
+              const itemData = getActorItemDataForDestination(sourceItem);
               const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
               try {
                 await sourceActor.deleteEmbeddedDocuments("Item", [sourceItem.id]);

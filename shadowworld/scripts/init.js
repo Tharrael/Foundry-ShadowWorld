@@ -205,6 +205,60 @@ Hooks.on("renderChatMessageHTML", (message, html) => {
       return;
     }
 
+    const partialDmgBtn = ev.target.closest(".apply-partial-damage");
+    if (partialDmgBtn) {
+      if (ev.detail === 0) return;
+
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      new Dialog({
+        title: "Partial damage",
+        content: `
+          <form>
+            <div class="form-group">
+              <label for="partial-damage-percent">Jakou část damage?</label>
+              <input id="partial-damage-percent" name="percent" type="number" min="0" max="100" step="any" required autofocus />
+              <span>%</span>
+            </div>
+          </form>
+        `,
+        buttons: {
+          apply: {
+            label: "Apply",
+            callback: async (html) => {
+              const percentValue = html.find('[name="percent"]').val();
+              const percent = Number(percentValue);
+              if (percentValue === "" || !Number.isFinite(percent) || percent < 0 || percent > 100) {
+                ui.notifications.warn("Enter a number from 0 to 100.");
+                return;
+              }
+
+              const controlled = canvas.tokens.controlled;
+              if (controlled.length === 0) {
+                ui.notifications.warn("Select at least one token!");
+                return;
+              }
+
+              const damage = Math.round(Number(partialDmgBtn.dataset.damage) * percent / 100);
+              const type = partialDmgBtn.dataset.type;
+              const penetration = Number(partialDmgBtn.dataset.penetration);
+              const { applyDamageToToken } = await import("./damage-engine.js");
+
+              for (const token of controlled) {
+                if (!token.actor) continue;
+                await applyDamageToToken(token, { damage, type, penetration });
+              }
+
+              partialDmgBtn.innerText = "Applied";
+            }
+          }
+        },
+        default: "apply"
+      }).render(true);
+      return;
+    }
+
     // 🩹 HEAL
     const healBtn = ev.target.closest(".apply-heal");
 

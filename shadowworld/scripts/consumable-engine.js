@@ -71,6 +71,9 @@ export async function useConsumable(actor, item) {
         <button class="apply-damage" data-damage="${rawDamage}" data-type="${result.damageType || "lethal"}" data-penetration="${result.penetrationBonus ||0}">
           Apply Damage
         </button>
+        <button class="apply-partial-damage" data-damage="${rawDamage}" data-type="${result.damageType || "lethal"}" data-penetration="${result.penetrationBonus ||0}">
+          Partial damage
+        </button>
       `
     });
 
