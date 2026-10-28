@@ -1,6 +1,14 @@
 import { openRollDialog } from "./roll-dialog.js";
 export class ShadowWorldActorSheet extends ActorSheet {
 
+  async close(options = {}) {
+    this._inventoryDropFallbackHandlers?.forEach(({ type, handler }) => {
+      document.removeEventListener(type, handler, true);
+    });
+    this._inventoryDropFallbackHandlers = null;
+    return super.close(options);
+  }
+
     async _chooseSkillAttribute(index) {
 
     const attributes = this.actor.system.attributes || {};
@@ -759,6 +767,61 @@ _activateInventorySorting(html) {
   let draggedItemId = null;
   let activeDragTraceId = null;
   const dragDataType = "application/x-shadowworld-actor-item";
+  const sheetElement = this.element?.[0] ?? this.element;
+
+  // This fallback is deliberately limited to ShadowWorld's custom drag payload.
+  // Foundry's global Item drag payload must continue through Foundry's own drop handlers.
+  this._inventoryDropFallbackHandlers?.forEach(({ type, handler }) => {
+    document.removeEventListener(type, handler, true);
+  });
+  const hasShadowWorldDragData = (event) =>
+    Array.from(event.dataTransfer?.types ?? []).includes(dragDataType);
+  const isInventoryDropTarget = (event) => {
+    const target = event.target instanceof Element ? event.target : event.target?.parentElement;
+    const inventory = target?.closest(".inventory-section");
+    return Boolean(inventory && sheetElement?.contains(inventory));
+  };
+  const fallbackDragOver = (event) => {
+    if (!hasShadowWorldDragData(event) || !isInventoryDropTarget(event)) return;
+    event.preventDefault();
+    if (event.dataTransfer) event.dataTransfer.dropEffect = "copy";
+  };
+  const fallbackDrop = (event) => {
+    if (!hasShadowWorldDragData(event) || !isInventoryDropTarget(event)) return;
+    logDrag("document-drop-fallback-received", {
+      eventType: event.type,
+      targetTag: event.target?.tagName,
+      targetClass: event.target?.className,
+      dataTransferTypes: Array.from(event.dataTransfer?.types ?? [])
+    });
+    try {
+      const payload = JSON.parse(event.dataTransfer.getData(dragDataType) || "{}");
+      // Let the existing item-drop handler perform same-actor inventory sorting.
+      if (payload.actorUuid === this.actor.uuid) {
+        logDrag("document-drop-fallback-skipped-same-actor", { sourceActorUuid: payload.actorUuid });
+        return;
+      }
+    } catch (error) {
+      // The normal handler below reports malformed custom payloads with its diagnostics.
+    }
+    // Consume only our custom actor-item drop so Foundry handles all other item drops.
+    event.preventDefault();
+    event.stopPropagation();
+    void handleActorItemDrop({
+      type: event.type,
+      originalEvent: event,
+      preventDefault: () => event.preventDefault(),
+      stopPropagation: () => event.stopPropagation()
+    });
+  };
+  this._inventoryDropFallbackHandlers = [
+    { type: "dragover", handler: fallbackDragOver },
+    { type: "drop", handler: fallbackDrop }
+  ];
+  this._inventoryDropFallbackHandlers.forEach(({ type, handler }) => {
+    document.addEventListener(type, handler, true);
+  });
+
   const logDrag = (step, details = {}) => {
     console.info(`ShadowWorld | Inventory drag | ${step}`, {
       traceId: activeDragTraceId,
