@@ -1,6 +1,6 @@
 export class ShadowWorldItemSheet extends ItemSheet {
 
-  static get defaultOptions() {
+    static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
         classes: ["shadowworld", "sheet", "item"],
         template: "systems/shadowworld/templates/item/item-sheet.hbs",

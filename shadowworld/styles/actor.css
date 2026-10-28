@@ -99,7 +99,7 @@
   margin-left: 10px;
 }
 .shadowworld.sheet.actor .sheet-header h1::after {
-  content: "Status : Recruit";
+  content: "Status : Agent";
   position: absolute;
   right: 0;
   

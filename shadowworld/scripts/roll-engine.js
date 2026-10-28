@@ -61,6 +61,7 @@ export async function rollCheck({
     }
     else if (rollType === "attack") {
       flavor = `<b>Attack Roll</b>`;
+      if (item) flavor += `<br>Weapon: ${item.name}`;
     }
     else if (rollType === "skill") {
       flavor = `<b>Skill Check:</b> ${skillName}`;
