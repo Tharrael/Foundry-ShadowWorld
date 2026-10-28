@@ -41,7 +41,9 @@ export async function openRollDialog({
     weapon: item,
     isInitiative: mode==="initiative",
 
-    attributes: Object.entries(actor.system.attributes || {}).map(([key]) => ({
+    attributes: Object.entries(actor.system.attributes || {})
+    .filter(([key]) => key !== "hp")
+    .map(([key]) => ({
       key,
       label: key.toUpperCase(),
       selected: key === (attribute || (mode === "initiative" ? "dex" : null))

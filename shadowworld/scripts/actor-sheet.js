@@ -8,6 +8,7 @@ export class ShadowWorldActorSheet extends ActorSheet {
     let options = "";
 
     for (let key in attributes) {
+      if (key === "hp") continue;
       options += `<option value="${key}">${key.toUpperCase()}</option>`;
     }
 
@@ -598,56 +599,53 @@ export class ShadowWorldActorSheet extends ActorSheet {
   html.find(".roll-attack").click(async ev => {
     const itemId = ev.currentTarget.dataset.itemId;
     const item = this.actor.items.get(itemId);
-
-    const equipped = [...this.actor.items.values()]
-    .filter(i => i.system?.equipped);
+    if (!item) return;
 
     const ammoId = item.system.loadedAmmoId;
 
-    let mag = item.system.currentMagazine || 0;
+    const mag = item.system.currentMagazine || 0;
     console.log("kapacita zásobníku:", mag);
 
     if (mag <= 0) {
       swNotify("Reload!", "warn", 3000);;
       return;
     }
-    await item.update({
-      "system.currentMagazine": mag - 1
-    });
-
-    if (ammoId) {
-      const ammo = this.actor.items.get(ammoId);
-
-      if (ammo) {
-        let qty = ammo.system.quantity || 0;
-
-        if (qty > 0) {
-
-          const newQty = qty - 1;
-
-          await ammo.update({
-            "system.quantity": newQty
-          });
-
-          // 🔥 AUTO DE-SELECT
-          if (newQty <= 0) {
-            await item.update({
-              "system.loadedAmmoId": ""
-            });
-
-            ui.notifications.info(`${ammo.name} depleted`);
-          }
-
-        } else {
-          ui.notifications.warn("Out of ammo!");
-        }
-      }
-    }
 
    openRollDialog({
     actor: this.actor,
     item: item,
-    mode: "attack"
+    mode: "attack",
+    onRoll: async () => {
+      // Spend the shot only after the attack roll has actually been made.
+      const currentItem = this.actor.items.get(itemId);
+      if (!currentItem) return;
+
+      const currentMagazine = Number(currentItem.system.currentMagazine) || 0;
+      await currentItem.update({
+        "system.currentMagazine": Math.max(0, currentMagazine - 1)
+      });
+
+      if (!ammoId) return;
+
+      const ammo = this.actor.items.get(ammoId);
+      if (!ammo) return;
+
+      const quantity = Number(ammo.system.quantity) || 0;
+      if (quantity <= 0) {
+        ui.notifications.warn("Out of ammo!");
+        return;
+      }
+
+      const newQuantity = quantity - 1;
+      await ammo.update({ "system.quantity": newQuantity });
+
+      // Keep the ammo linked while the roll is being resolved, then detach it
+      // after spending the final unit, regardless of the roll result.
+      if (newQuantity <= 0) {
+        await currentItem.update({ "system.loadedAmmoId": "" });
+        ui.notifications.info(`${ammo.name} depleted`);
+      }
+    }
     });
   });
 
