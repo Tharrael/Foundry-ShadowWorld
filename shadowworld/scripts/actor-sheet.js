@@ -757,6 +757,87 @@ export class ShadowWorldActorSheet extends ActorSheet {
 
 _activateInventorySorting(html) {
   let draggedItemId = null;
+  const dragDataType = "application/x-shadowworld-actor-item";
+  const readActorItemDragData = (event) => {
+    const transfer = event?.originalEvent?.dataTransfer;
+    if (!transfer) return null;
+
+    try {
+      const raw = transfer.getData(dragDataType);
+      return raw ? JSON.parse(raw) : null;
+    } catch (error) {
+      console.warn("ShadowWorld | Could not read dragged item data", error);
+      return null;
+    }
+  };
+
+  const handleActorItemDrop = async (event) => {
+    const data = readActorItemDragData(event);
+    if (!data?.actorUuid || !data?.itemUuid || data.actorUuid === this.actor.uuid) return false;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const sourceItem = await fromUuid(data.itemUuid);
+    const sourceActor = sourceItem?.parent;
+    if (!sourceItem || !sourceActor || sourceActor.uuid !== data.actorUuid) {
+      ui.notifications.warn("The dragged item is no longer available.");
+      return true;
+    }
+
+    new Dialog({
+      title: "Move item between characters",
+      content: "<p>Choose how to add the dragged item to this character.</p>",
+      buttons: {
+        copy: {
+          label: "Copy",
+          callback: async () => {
+            try {
+              if (!sourceActor.items.has(sourceItem.id)) {
+                ui.notifications.warn("The dragged item is no longer available.");
+                return;
+              }
+              const itemData = sourceItem.toObject();
+              delete itemData._id;
+              await this.actor.createEmbeddedDocuments("Item", [itemData]);
+              ui.notifications.info(`${sourceItem.name} copied to ${this.actor.name}.`);
+            } catch (error) {
+              console.error("ShadowWorld | Failed to copy actor item", error);
+              ui.notifications.error("The item could not be copied.");
+            }
+          }
+        },
+        transfer: {
+          label: "Transfer",
+          callback: async () => {
+            try {
+              if (!sourceActor.items.has(sourceItem.id)) {
+                ui.notifications.warn("The dragged item is no longer available.");
+                return;
+              }
+              const itemData = sourceItem.toObject();
+              delete itemData._id;
+              const [createdItem] = await this.actor.createEmbeddedDocuments("Item", [itemData]);
+              try {
+                await sourceActor.deleteEmbeddedDocuments("Item", [sourceItem.id]);
+              } catch (error) {
+                await this.actor.deleteEmbeddedDocuments("Item", [createdItem.id]);
+                throw error;
+              }
+              ui.notifications.info(`${sourceItem.name} transferred to ${this.actor.name}.`);
+            } catch (error) {
+              console.error("ShadowWorld | Failed to transfer actor item", error);
+              ui.notifications.error("The item could not be transferred completely.");
+            }
+          }
+        }
+      },
+      default: "copy"
+    }).render(true);
+
+    return true;
+  };
+
   const getTypeGroup = (item) => {
     if (!item) return null;
     if (item.type === "weapon") return "weapon";
@@ -775,8 +856,15 @@ _activateInventorySorting(html) {
     ev.currentTarget.classList.add("dragging");
 
     if (ev.originalEvent?.dataTransfer) {
+      const item = this.actor.items.get(itemId);
+      if (item) {
+        ev.originalEvent.dataTransfer.setData(dragDataType, JSON.stringify({
+          actorUuid: this.actor.uuid,
+          itemUuid: item.uuid
+        }));
+      }
       ev.originalEvent.dataTransfer.setData("text/plain", itemId);
-      ev.originalEvent.dataTransfer.effectAllowed = "move";
+      ev.originalEvent.dataTransfer.effectAllowed = "copyMove";
     }
   });
 
@@ -801,6 +889,8 @@ _activateInventorySorting(html) {
     ev.preventDefault();
     const targetEl = ev.currentTarget;
     targetEl.classList.remove("drop-before", "drop-after");
+
+    if (await handleActorItemDrop(ev)) return;
 
     const targetId = ev.currentTarget.dataset.itemId;
     const sourceId = draggedItemId || ev.originalEvent?.dataTransfer?.getData("text/plain");
@@ -837,6 +927,16 @@ _activateInventorySorting(html) {
 
     await this.actor.updateEmbeddedDocuments("Item", sortUpdates);
     this.render(false);
+  });
+
+  html.find(".inventory-section").on("dragover", (ev) => {
+    ev.preventDefault();
+    if (ev.originalEvent?.dataTransfer) ev.originalEvent.dataTransfer.dropEffect = "copy";
+  });
+
+  html.find(".inventory-section").on("drop", async (ev) => {
+    if (ev.target.closest(".inv-item")) return;
+    await handleActorItemDrop(ev);
   });
 
   html.find(".inv-item").on("dragend", (ev) => {
